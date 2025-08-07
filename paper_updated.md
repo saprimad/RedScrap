@@ -1,3 +1,4 @@
+
 ---
 title: 'RedScrap: A Python Tool for Netnographic Data Collection from Reddit'
 tags:
@@ -15,7 +16,7 @@ authors:
     affiliation: 1
   - name: Jannatul Ain Jamal (Dr.)
     affiliation: 1
-  - name: Syuhaida Binti Ismail (Dr.)
+  - name: Nursyuhadah Othman (Dr.)
     affiliation: 1
 affiliations:
   - name: Faculty of Pharmacy, Universiti Teknologi MARA, Malaysia
@@ -58,3 +59,11 @@ In addition to the command-line interface, RedScrap also includes a simple graph
 ## Acknowledgements
 
 RedScrap was developed as part of a PhD research project at Universiti Teknologi MARA, supported by the Ministry of Health Malaysia. It is designed to support netnographic research using Reddit data and aims to help researchers efficiently collect and analyze public discourse from digital communities.
+
+Refference  
+Cherecheș, M., Finta, H., Prisada, R., & Rusu, A. (2024). Pharmacists’ Professional Satisfaction and Challenges: A Netnographic Analysis of Reddit and Facebook Discussions. Pharmacy, 12, 1-33. https://doi.org/10.3390/pharmacy12050155  
+Chi, Y., & Chen, H. Y. (2023). Investigating Substance Use via Reddit: Systematic Scoping Review [Review]. Journal of Medical Internet Research, 25, Article e48905. https://doi.org/10.2196/48905  
+Jeacle, I. (2020). Navigating netnography: A guide for the accounting researcher. Financial Accountability & Management. https://doi.org/10.1111/faam.12237  
+Kozinets, R. V., & Gretzel, U. (2024). Netnography evolved: New contexts, scope, procedures and sensibilities. Annals of Tourism Research, 104, 103693. https://doi.org/10.1016/j.annals.2023.103693  
+Rocha-Silva, T., Nogueira, C., & Rodrigues, L. (2024). Passive data collection on Reddit: a practical approach. Research Ethics, 20(3), 453-470. https://doi.org/10.1177/17470161231210542  
+Strand, M. (2022). Attitudes towards disordered eating in the rock climbing community: a digital ethnography [Article]. Journal of Eating Disorders, 10(1), Article 96. https://doi.org/10.1186/s40337-022-00619-5  
