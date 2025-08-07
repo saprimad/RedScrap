@@ -1,64 +1,35 @@
-# RedScrap
+# RedScrap: A Python Tool for Netnographic Data Collection from Reddit
 
-**RedScrap** is a lightweight and customizable Python tool for collecting Reddit comments and metadata to support qualitative, netnographic, and digital ethnography research.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16756945.svg)](https://doi.org/10.5281/zenodo.16756945)
 
-It enables researchers to extract and structure public discourse from specific subreddits or Reddit threads using filters such as keyword, date range, and post type.
+RedScrap is a lightweight and customizable Python tool for collecting Reddit comments and metadata for netnographic and qualitative research. Built using the PRAW (Python Reddit API Wrapper), RedScrap supports keyword filtering, date range selection, and CSV/JSON output formats. It includes both a CLI and a simple GUI to accommodate different user skill levels.
 
-## 🔧 Features
+## Features
 
-- Scrape Reddit comments from posts or entire subreddits
+- Extract Reddit comments and metadata
 - Filter by keyword, post type, and date range
-- Export data in CSV or JSON format
-- Built on PRAW (Python Reddit API Wrapper)
-- Ideal for netnography, thematic analysis, and public discourse studies
+- Output data in CSV or JSON
+- CLI and GUI support
+- Ideal for digital ethnography, discourse studies, and qualitative research
 
-## 📦 Installation
+## Installation
 
-Clone the repo and install dependencies:
-
-```bash
-git clone https://github.com/saprimad/RedScrap.git
-cd RedScrap
+```
 pip install -r requirements.txt
 ```
 
-## ⚙️ Configuration
-
-Create a `.env` file or use environment variables:
-
-```
-REDDIT_CLIENT_ID=your_client_id
-REDDIT_CLIENT_SECRET=your_client_secret
-REDDIT_USER_AGENT=RedScrapAgent
-```
-
-## 🚀 Usage
-
-Basic example (adjust as needed):
+## Usage
 
 ```python
 from redscrap import RedScrap
 
 scraper = RedScrap()
-scraper.scrape_post("https://www.reddit.com/r/malaysia/comments/xxxxx/title/")
+scraper.scrape_post("https://www.reddit.com/r/malaysia/comments/xxxxx/sample_post/")
 scraper.export_to_csv("output.csv")
 ```
 
-## 📁 Output
+## Citation
 
-- Comment body
-- Author
-- Score
-- Timestamp
-- Subreddit
-- Parent/Thread ID
+If you use RedScrap in your research, please cite the archived version:
 
-## 📝 License
-
-This project is licensed under the MIT License.
-
-## 👨‍🔬 Citation
-
-If used in research, please cite:
-
-> Tumiran, M.S. (2025). *RedScrap: A Python Tool for Netnographic Data Collection from Reddit*. (In submission to JOSS)
+Tumiran, M. S., Wahab, M. S. A., Jamal, J. A., & Othman, N. (2025). *RedScrap: A Python Tool for Netnographic Data Collection from Reddit* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.16756945

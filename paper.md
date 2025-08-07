@@ -28,7 +28,7 @@ date: 2025-08-06
 
 Netnography has become an essential approach for understanding online communities and public discourse. Reddit, as a platform centered around interest-based subreddits and largely anonymous user interactions, offers a valuable source of user-generated content for such studies. However, manual data collection from Reddit can be challenging for researchers unfamiliar with API interaction or data extraction methods.
 
-**RedScrap** is a lightweight and customizable Python tool designed to support netnographic research by automating the collection of Reddit comments and metadata. Developed using the PRAW (Python Reddit API Wrapper) library, RedScrap enables researchers to extract structured data from Reddit threads or subreddits, with support for filtering by keyword, post type, and date range. The tool outputs data in standard formats (CSV, JSON), making it suitable for qualitative coding, thematic analysis, and digital discourse studies.
+**RedScrap** is a lightweight and customizable Python tool designed to support netnographic research by automating the collection of Reddit comments and metadata. Developed using the PRAW (Python Reddit API Wrapper) library, RedScrap enables researchers to extract structured data from Reddit threads or subreddits, with support for filtering by keyword, post type, and date range. The tool outputs data in standard formats (CSV, JSON), making it suitable for qualitative coding, thematic analysis, and digita...
 
 ## Statement of Need
 
@@ -54,13 +54,18 @@ scraper.scrape_post("https://www.reddit.com/r/malaysia/comments/xxxxx/sample_pos
 scraper.export_to_csv("output.csv")
 ```
 
-In addition to the command-line interface, RedScrap also includes a simple graphical user interface (GUI) that allows users to extract Reddit comments without writing code. Users can input a target subreddit (e.g., `malaysia`), enter a keyword, and define a date range. After clicking **Search Threads**, the tool will display matching threads. The user can then select a thread and click **Scrape Selected Thread & Save** to export the comments and metadata into a structured file (CSV or JSON) for further analysis.
+In addition to the command-line interface, RedScrap also includes a simple graphical user interface (GUI) that allows users to extract Reddit comments without writing code. Users can input a target subreddit (e.g., `malaysia`), enter a keyword, and define a date range. After clicking **Search Threads**, the tool will display matching threads. The user can then select a thread and click **Scrape Selected Thread & Save** to export the comments and metadata into a structured file (CSV or JSON) for further a...
 
 ## Acknowledgements
 
 RedScrap was developed as part of a PhD research project at Universiti Teknologi MARA, supported by the Ministry of Health Malaysia. It is designed to support netnographic research using Reddit data and aims to help researchers efficiently collect and analyze public discourse from digital communities.
 
-Refference  
+## Citation
+
+Tumiran, M. S., Wahab, M. S. A., Jamal, J. A., & Othman, N. (2025). *RedScrap: A Python Tool for Netnographic Data Collection from Reddit* (Version 1.0.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.16756945
+
+## References
+
 Cherecheș, M., Finta, H., Prisada, R., & Rusu, A. (2024). Pharmacists’ Professional Satisfaction and Challenges: A Netnographic Analysis of Reddit and Facebook Discussions. Pharmacy, 12, 1-33. https://doi.org/10.3390/pharmacy12050155  
 Chi, Y., & Chen, H. Y. (2023). Investigating Substance Use via Reddit: Systematic Scoping Review [Review]. Journal of Medical Internet Research, 25, Article e48905. https://doi.org/10.2196/48905  
 Jeacle, I. (2020). Navigating netnography: A guide for the accounting researcher. Financial Accountability & Management. https://doi.org/10.1111/faam.12237  
