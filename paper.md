@@ -22,7 +22,7 @@ authors:
 affiliations:
   - name: "Faculty of Pharmacy, Universiti Teknologi MARA, Malaysia"
     index: 1
-date: 2025-08-06
+date: 2025-08-11
 ---
 
 ## Summary
@@ -32,6 +32,8 @@ Netnography is a qualitative research method used to study online communities an
 **RedScrap** is a lightweight and open-source Python tool designed to streamline Reddit data collection for netnographic and qualitative research. Built using the PRAW (Python Reddit API Wrapper) library, RedScrap allows users to extract structured data from Reddit threads or entire subreddits, including comments and metadata. The tool supports filtering by keyword and date range, enabling targeted data extraction across a wide range of research topics.
 
 RedScrap provides both a command-line interface (CLI) and a user-friendly graphical interface (GUI), making it accessible to researchers with different levels of technical proficiency. The tool outputs data in standard formats (CSV and JSON), making it suitable for integration into qualitative coding workflows, such as thematic analysis, content analysis, and triangulation with other data sources.
+
+Version **1.1.4** introduces two notable enhancements: an **Early Report** function, which generates a quick table of matching threads for preliminary scoping, and a **Scrape All Threads & Save** feature for one-click bulk extraction. These additions further streamline large-scale qualitative data collection while maintaining reproducibility.
 
 RedScrap is designed for researchers in fields such as communication, sociology, digital ethnography, and public policy who seek efficient access to Reddit data. By lowering technical barriers and promoting reproducible practices, RedScrap contributes to the growing ecosystem of open-source tools that support ethical and scalable online research.
 
@@ -91,12 +93,16 @@ python gui.py
 
 In the GUI:
 - Enter a subreddit name (e.g., `malaysia`)
-- Specify a keyword (optional)
+- Specify up to three comma-separated keywords (optional)
 - Define a date range (optional)
 - Click **Search Threads** to view matching threads
-- Select a thread and click **Scrape Selected Thread & Save** to export the comments and metadata
+- **Early Report**: Generate a CSV/PDF summary of all matching threads (titles, URLs, dates, upvotes, comment counts) for quick scoping
+- **Scrape Selected Thread & Save**: Export comments and metadata from a specific thread
+- **Scrape All Threads & Save**: Bulk export all comments and metadata from every matching thread
+- Output files are saved in CSV or JSON format, ready for analysis in software such as Excel, Atlas.ti, NVivo, or Python tools.
 
-The output file will be saved in CSV or JSON format, ready for analysis in software such as Excel, Atlas.ti, NVivo, or any Python-based tools.
+![RedScrap GUI](new-gui-screenshot.png)  
+*Figure 1. RedScrap v1.1.4 graphical interface, showing the new “Early Report” and “Scrape All Threads & Save” buttons and the citation footer.*
 
 ## Acknowledgements
 
@@ -106,7 +112,7 @@ This project was developed as part of a doctoral research study at the Faculty o
 
 If you use RedScrap in your research, please cite it as:
 
-Tumiran, M. S., Abd Wahab, M. S., Jamal, J. A., & Othman, N. (2025). *RedScrap: Python Tool for Netnographic Data Collection* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.16756945
+Tumiran, M. S., Abd Wahab, M. S., Jamal, J. A., & Othman, N. (2025). *RedScrap: Python Tool for Netnographic Data Collection* (v1.1.4). Zenodo. https://doi.org/10.5281/zenodo.16756945
 
 ## References
 
