@@ -101,7 +101,7 @@ In the GUI:
 - **Scrape All Threads & Save**: Bulk export all comments and metadata from every matching thread
 - Output files are saved in CSV or JSON format, ready for analysis in software such as Excel, Atlas.ti, NVivo, or Python tools.
 
-![RedScrap GUI](new-gui-screenshot.png)  
+![RedScrap GUI](images/redscrap_gui_v1.1.4.png)  
 *Figure 1. RedScrap v1.1.4 graphical interface, showing the new “Early Report” and “Scrape All Threads & Save” buttons and the citation footer.*
 
 ## Acknowledgements

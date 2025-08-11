@@ -86,7 +86,7 @@ Steps:
 
 Output files are saved with timestamps.
 
-![RedScrap GUI](new-gui-screenshot.png)
+![RedScrap GUI](images/redscrap_gui_v1.1.4.png)
 
 ---
 
