@@ -179,3 +179,10 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# RedScrap local credentials and generated analysis artefacts
+reddit_config.json
+sentiment_model.pkl
+sentiment_vectorizer.pkl
+word_freq_bar.png
+peak_day.png
+peak_hour.png
