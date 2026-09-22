@@ -1,2 +1,9 @@
 praw
-python-dotenv
+pandas
+numpy
+matplotlib
+scipy
+reportlab
+joblib
+scikit-learn
+openpyxl
