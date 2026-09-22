@@ -10,109 +10,99 @@ authors:
   - name: "Mad Sapri Tumiran"
     orcid: 0009-0006-2634-5009
     affiliation: 1
-  - name: "Mohd Shahezwan Abd. Wahab (Dr.)"
+  - name: "Mohd Shahezwan Abd Wahab"
     orcid: 0000-0002-2801-0134
     affiliation: 1
-  - name: "Jannatul Ain Jamal (Dr.)"
+  - name: "Janattul Ain Jamal"
     orcid: 0009-0009-7083-7512
     affiliation: 1
-  - name: "Nursyuhadah Othman (Dr.)"
+  - name: "Nursyuhadah Othman"
     orcid: 0000-0002-0650-3456
     affiliation: 1
 affiliations:
   - name: "Faculty of Pharmacy, Universiti Teknologi MARA, Malaysia"
     index: 1
-date: 2025-08-11
+date: 2026-09-21
 ---
 
 ## Summary
 
-Netnography is a qualitative research method used to study online communities and digital interactions. Reddit, with its large user base and topic-specific subreddits, offers a rich source of publicly available content for exploring community discourse, opinions, and behaviors. However, collecting and organizing Reddit data for research purposes can be technically challenging, particularly for researchers unfamiliar with programming or API usage.
+Netnography examines online communities and naturally occurring digital interactions. Reddit offers extensive topic-based discussions, but systematic collection can be technically difficult for researchers who are unfamiliar with APIs or programming.
 
-**RedScrap** is a lightweight and open-source Python tool designed to streamline Reddit data collection for netnographic and qualitative research. Built using the PRAW (Python Reddit API Wrapper) library, RedScrap allows users to extract structured data from Reddit threads or entire subreddits, including comments and metadata. The tool supports filtering by keyword and date range, enabling targeted data extraction across a wide range of research topics.
-
-RedScrap provides both a command-line interface (CLI) and a user-friendly graphical interface (GUI), making it accessible to researchers with different levels of technical proficiency. The tool outputs data in standard formats (CSV and JSON), making it suitable for integration into qualitative coding workflows, such as thematic analysis, content analysis, and triangulation with other data sources.
-
-Version **1.1.4** introduces two notable enhancements: an **Early Report** function, which generates a quick table of matching threads for preliminary scoping, and a **Scrape All Threads & Save** feature for one-click bulk extraction. These additions further streamline large-scale qualitative data collection while maintaining reproducibility.
-
-RedScrap is designed for researchers in fields such as communication, sociology, digital ethnography, and public policy who seek efficient access to Reddit data. By lowering technical barriers and promoting reproducible practices, RedScrap contributes to the growing ecosystem of open-source tools that support ethical and scalable online research.
+RedScrap is an open-source Python desktop application for collecting and organising Reddit threads and comments for netnographic and related online research. It uses PRAW to search a specified subreddit by keyword and date parameters, exports comment-level data to Excel, and produces an exploratory PDF report. Version 21.9.0 adds improved descriptive, engagement, temporal, yearly and lexical summaries, English/Malay-aware term processing, robust report generation, and optional binary sentiment classification.
 
 ## Statement of Need
 
-Researchers in social sciences, digital ethnography, and communication studies increasingly rely on Reddit as a source of user-generated data to understand public opinion, discourse, and community interactions. Despite its value, Reddit data can be difficult to access in a structured form due to the technical complexity of APIs and the lack of user-friendly tools designed specifically for qualitative research workflows.
+Many available Reddit tools prioritise large-scale computational workflows. Qualitative researchers often need a more accessible process for identifying relevant discussions, reviewing thread metadata and exporting comment-level material for later screening or coding. RedScrap provides a graphical workflow while retaining reusable Python classes for retrieval, analysis and export.
 
-While existing Reddit scraping tools often prioritize large-scale quantitative data or are built for developers, there is a gap in tools that cater to qualitative researchers who need targeted, flexible, and ethical ways to collect Reddit content. RedScrap addresses this gap by offering an accessible, lightweight Python tool that enables researchers to extract Reddit comments and metadata with minimal setup.
+The exported Excel data include thread ID, date, post type, thread title, thread URL, author, comment text and upvotes. The PDF report supports preliminary scoping and descriptive exploration; it is not a substitute for formal qualitative analysis or validated stance coding.
 
-RedScrap supports both code-based and GUI-based workflows, making it suitable for researchers with or without programming experience. It outputs data in standard formats (CSV and JSON), which are easily imported into qualitative analysis software for coding and interpretation.
+## Implementation and Functionality
 
-By lowering the entry barrier to Reddit data collection and aligning with academic research practices, RedScrap meets the growing need for specialized tools that support qualitative and netnographic research in digital environments.
+RedScrap provides:
+
+- subreddit and keyword-based thread discovery through PRAW;
+- start- and end-date filtering of returned search candidates;
+- selected-thread and multi-thread comment export to Excel;
+- descriptive, engagement, temporal and yearly summaries;
+- English/Malay-aware unigram and bigram frequency analysis;
+- tables and visualisations in an exploratory PDF report;
+- optional positive/negative sentiment classification using a fitted TF-IDF vectorizer and logistic-regression model; and
+- background GUI tasks, progress feedback and cancellation support.
+
+The graphical search retrieves a maximum of 200 results ordered newest-first. Date filtering is applied to those returned candidates, so a search is reproducible within its stated parameters and retrieval bounds but is not an exhaustive historical archive of Reddit.
 
 ## Installation
 
-To install RedScrap and its dependencies, clone the repository and install the required Python packages using pip:
+RedScrap requires Python 3.10 or later; Python 3.11 is recommended.
 
 ```bash
-git clone https://github.com/yourusername/RedScrap.git
+git clone https://github.com/saprimad/RedScrap.git
 cd RedScrap
-pip install -r requirements.txt
+python -m venv .venv
+python -m pip install -r requirements.txt
+python RedScrap.py
 ```
 
-RedScrap requires Python 3.7 or later. It uses the PRAW library for accessing Reddit’s API, along with standard packages for GUI and data export. Make sure to have a valid Reddit API client ID and secret, which can be obtained by registering an application at [https://www.reddit.com/prefs/apps](https://www.reddit.com/prefs/apps).
+Users must request access to the Reddit Data API, obtain Reddit's approval, and use their own registered application's `client_id` and `client_secret`. Researchers should follow the Reddit for Researchers guidance and select **I'm a researcher** when applying. RedScrap does not provide shared credentials. Credentials are stored locally in `reddit_config.json`, which must remain private and is excluded from version control.
 
 ## Usage
 
-RedScrap can be used in two modes: via a Python script or through a simple graphical user interface (GUI). It allows users to extract Reddit comments and metadata for qualitative research by targeting specific posts, subreddits, keywords, and date ranges.
+In the graphical interface:
 
-### Python Script / CLI Usage
+- enter a subreddit name without `r/`;
+- enter one or more comma-separated keywords;
+- provide a start and end date in `YYYY-MM-DD` format;
+- select **Search Threads**;
+- generate an **Early Report**, export a selected thread, or export all returned threads; and
+- choose the output filename and location when prompted.
 
-Here is a basic example using RedScrap in a Python script:
+The optional sentiment component requires `sentiment_vectorizer.pkl` and `sentiment_model.pkl` in the same directory as `RedScrap.py`. If either file is unavailable, the remaining collection, Excel-export and reporting functions continue to operate.
 
-```python
-from redscrap import RedScrap
+## Limitations and Ethical Use
 
-scraper = RedScrap()
-scraper.scrape_post("https://www.reddit.com/r/malaysia/comments/xxxxx/sample_post/")
-scraper.export_to_csv("output.csv")
-```
+Reddit API behaviour, rate limits, content deletion and access restrictions can affect retrieval. Loading nested comments may take considerable time for large discussions. The supplied sentiment model was trained using Sentiment140 and has not been established as a validated measure for Reddit discourse, Malay-language content or a user's specific research domain. Its output should be treated as exploratory.
 
-You may also extract data from a subreddit by keyword:
+Researchers remain responsible for obtaining any required ethics approval or exemption, complying with Reddit's applicable terms and local law, minimising collection and disclosure of personal information, and storing exported data securely.
 
-```python
-scraper.scrape_subreddit("malaysia", keyword="legalization", limit=100)
-```
+## Development Background
 
-Before using the script, ensure that your Reddit API credentials are configured (via `.env` or direct variable assignment inside the code, depending on your implementation).
+RedScrap was developed as part of a PhD research project at the Faculty of Pharmacy, Universiti Teknologi MARA (UiTM), Malaysia, to facilitate the systematic collection of Reddit data for netnographic research. The software has since undergone continuous development, with improvements to its data-extraction capabilities, filtering options, user interface, output formats and overall usability. RedScrap is openly archived on Zenodo to promote research transparency, reproducibility, software reuse and formal citation.
 
-### GUI Usage
+## Software Availability
 
-RedScrap includes a graphical interface that allows users to collect Reddit data without writing any code. To launch the GUI:
-
-```bash
-python gui.py
-```
-
-In the GUI:
-- Enter a subreddit name (e.g., `malaysia`)
-- Specify up to three comma-separated keywords (optional)
-- Define a date range (optional)
-- Click **Search Threads** to view matching threads
-- **Early Report**: Generate a CSV/PDF summary of all matching threads (titles, URLs, dates, upvotes, comment counts) for quick scoping
-- **Scrape Selected Thread & Save**: Export comments and metadata from a specific thread
-- **Scrape All Threads & Save**: Bulk export all comments and metadata from every matching thread
-- Output files are saved in CSV or JSON format, ready for analysis in software such as Excel, Atlas.ti, NVivo, or Python tools.
-
-![RedScrap GUI](images/redscrap_gui_v1.1.4.png)  
-*Figure 1. RedScrap v1.1.4 graphical interface, showing the new “Early Report” and “Scrape All Threads & Save” buttons and the citation footer.*
+- Source code: https://github.com/saprimad/RedScrap
+- Archived release: https://doi.org/10.5281/zenodo.22866437
+- Version: 21.9.0
+- Licence: MIT
 
 ## Acknowledgements
 
-This project was developed as part of a doctoral research study at the Faculty of Pharmacy, Universiti Teknologi MARA (UiTM), Malaysia. The authors gratefully acknowledge the support of the Ministry of Health Malaysia (KKM) through the Hadiah Latihan Persekutuan (HLP) program.
+The development of RedScrap was supported by the Faculty of Pharmacy, Universiti Teknologi MARA (UiTM), Malaysia. The associated research acknowledges NMRR ID-26-03583-QPR and the permission of the Director-General of Health Malaysia to publish relevant research outputs.
 
 ## Citation
 
-If you use RedScrap in your research, please cite it as:
-
-Tumiran, M. S., Abd Wahab, M. S., Jamal, J. A., & Othman, N. (2025). *RedScrap: Python Tool for Netnographic Data Collection* (v1.1.4). Zenodo. https://doi.org/10.5281/zenodo.16756945
+Tumiran, M. S., Abd Wahab, M. S., Jamal, J. A., & Othman, N. (2026). *RedScrap: Python Tool for Netnographic Data Collection* (Version 21.9.0) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22866437
 
 ## References
 
@@ -127,3 +117,4 @@ Kozinets, R. V., & Gretzel, U. (2024). Netnography evolved: New contexts, scope,
 Rocha-Silva, T., Nogueira, C., & Rodrigues, L. (2024). Passive data collection on Reddit: A practical approach. *Research Ethics*, 20(3), 453–470. https://doi.org/10.1177/17470161231210542
 
 Strand, M. (2022). Attitudes towards disordered eating in the rock climbing community: A digital ethnography. *Journal of Eating Disorders*, 10(1), 96. https://doi.org/10.1186/s40337-022-00619-5
+

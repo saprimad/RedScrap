@@ -1,30 +1,36 @@
 # Changelog
 
-All notable changes to RedScrap are documented here.
+All notable changes to RedScrap are documented in this file.
 
-## [2.1.9] - 2026-09-22
+## [21.9.0] - 2026-09-21
 
 ### Added
-- Optional binary sentiment-analysis integration using local `sentiment_vectorizer.pkl` and `sentiment_model.pkl` files.
-- Enhanced descriptive statistics for upvotes and comment length.
-- Post-type summaries and visualisations.
-- Yearly thread/comment summaries.
-- English/Malay-aware word-frequency cleaning with unigram and bigram extraction.
-- Temporal summaries for peak day and peak hour.
-- Engagement summaries, top-thread and top-comment tables, and a complete thread list.
-- Headless/console fallback when Tkinter cannot initialise.
+
+- Optional binary sentiment analysis using a fitted TF-IDF vectorizer and logistic-regression classifier.
+- Sentiment summary table, pie chart and narrative interpretation in the PDF report.
+- English and Malay stop-word handling with unigram and bigram frequency analysis.
+- Post-type metadata and consistent thread identifiers in Excel exports.
+- GUI progress indication, background tasks and cancellation support.
 
 ### Improved
-- More robust PDF report generation with table splitting and safer paragraph rendering.
-- Handling of long or malformed Reddit text in ReportLab.
-- Local credential workflow using `reddit_config.json`.
-- Dependency list and project documentation.
 
-### Security
-- Removed Reddit API credentials that had previously been embedded in the public source file.
-- Added `reddit_config.json` and local model artefacts to `.gitignore`.
+- Comment-level Excel export for selected and multiple threads.
+- Descriptive, engagement, temporal and yearly summaries.
+- Large-table splitting in generated PDF reports.
+- Escaping and truncation of user-generated text to reduce ReportLab parsing and layout failures.
+- Visibility of zero-comment threads in the full-thread report table.
+- Version branding, installation guidance, citation metadata and responsible-use documentation.
 
-### Notes
-- Sentiment analysis is optional. If the model files are absent, the remaining RedScrap analyses continue normally.
-- Binary sentiment results are exploratory and may not generalise perfectly from training data such as Sentiment140 to Reddit discourse.
-- The Zenodo archive currently available for citation is v1.0.0 (DOI: 10.5281/zenodo.16756945). A v2.1.9 Zenodo version can be created from a GitHub release.
+### Known limitations
+
+- GUI searches retrieve at most 200 results ordered newest-first; date filtering does not make the search exhaustive.
+- Reddit API behaviour, rate limits and content availability can affect retrieval.
+- Sentiment output is exploratory and is not validated for every Reddit, Malay-language or research context.
+
+## [1.0.0] - 2025
+
+- Initial stable release of RedScrap for Reddit-based netnographic data collection.
+- Basic subreddit, keyword and date filtering.
+- Thread and comment retrieval through PRAW.
+- Graphical and command-line-compatible components.
+- Structured data export and preliminary documentation.

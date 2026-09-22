@@ -181,8 +181,9 @@ cython_debug/
 .cursorindexingignore
 # RedScrap local credentials and generated analysis artefacts
 reddit_config.json
-sentiment_model.pkl
-sentiment_vectorizer.pkl
+
 word_freq_bar.png
 peak_day.png
 peak_hour.png
+*.xlsx
+output/

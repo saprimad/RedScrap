@@ -1,24 +1,15 @@
-"""
-RedScrap v2.1.9 (with Sentiment Analysis Integration)
-------------------
+"""RedScrap v21.9.0.
 
-This script bundles the full RedScrap tool into a single Python file,
-with trained TF-IDF + Logistic Regression sentiment analysis integration.
+A desktop research tool for retrieving Reddit threads and comments through
+PRAW, exporting structured data, and producing an exploratory PDF report.
 
-NOTE ON NLP INTEGRATION:
-The sentiment analysis requires pre-trained models. For this script to 
-function with actual sentiment prediction, you must:
-1.  Install 'joblib' and 'scikit-learn' (`pip install scikit-learn joblib`).
-2.  Train a binary classification model (e.g., Logistic Regression) on a 
-    sentiment dataset (e.g., Sentiment140).
-3.  Save the trained TF-IDF/CountVectorizer as 'sentiment_vectorizer.pkl'.
-4.  Save the trained classification model as 'sentiment_model.pkl'.
-5.  Place both .pkl files in the same directory as this script.
-
-If the .pkl files are missing, sentiment analysis is skipped and the remaining RedScrap analyses continue to run.
+Optional sentiment analysis uses ``sentiment_vectorizer.pkl`` and
+``sentiment_model.pkl``. Place both files in the same directory as this script.
+If either file is unavailable, sentiment analysis is skipped while the other
+collection and reporting functions remain available.
 
 Usage:
-  python RedScrap.py
+    python redscrap_v21.9.0.py
 """
 
 # --- Changelog for patched version ---
@@ -113,6 +104,8 @@ from reportlab.graphics.charts.piecharts import Pie # NEW: For Sentiment Pie Cha
 from reportlab.lib.styles import ParagraphStyle
 from xml.sax.saxutils import escape as _xml_escape  # for safe HTML escaping
 
+__version__ = "21.9.0"
+
 # ------------------------------------------------------------------
 # Helper functions to escape dynamic text and build safe Paragraphs
 # These functions avoid ReportLab 'paraparser' errors by escaping
@@ -178,7 +171,7 @@ def get_reddit():
                 )
                 cid = input("Enter your Reddit Client ID: ").strip()
                 csec = input("Enter your Reddit Client Secret: ").strip()
-                user_agent = input("Enter a user agent (default: 'RedScrap v2.1.9'): ").strip() or "RedScrap v2.1.9"
+                user_agent = input("Enter a user agent (default: 'RedScrap v21.9.0'): ").strip() or "RedScrap v21.9.0"
                 if not cid or not csec:
                     raise RuntimeError(
                         "Reddit credentials are required. Please provide both client_id and client_secret."
@@ -207,7 +200,7 @@ def get_reddit():
                         return
                     creds["client_id"] = cid_val
                     creds["client_secret"] = csec_val
-                    creds["user_agent"] = "RedScrap v2.1.9"
+                    creds["user_agent"] = "RedScrap v21.9.0"
                     with open(CONFIG_FILE, "w") as f:
                         json.dump(creds, f)
                     login.destroy()
@@ -227,7 +220,7 @@ def get_reddit():
             print("tkinter is not available; please enter your Reddit API credentials in the console.")
             cid = input("Enter your Reddit Client ID: ").strip()
             csec = input("Enter your Reddit Client Secret: ").strip()
-            user_agent = input("Enter a user agent (default: 'RedScrap v2.1.9'): ").strip() or "RedScrap v2.1.9"
+            user_agent = input("Enter a user agent (default: 'RedScrap v21.9.0'): ").strip() or "RedScrap v21.9.0"
             if not cid or not csec:
                 raise RuntimeError(
                     "Reddit credentials are required. Please provide both client_id and client_secret."
@@ -242,7 +235,7 @@ def get_reddit():
     return praw.Reddit(
         client_id=cfg["client_id"],
         client_secret=cfg["client_secret"],
-        user_agent=cfg.get("user_agent", "RedScrap v2.1.9"),
+        user_agent=cfg.get("user_agent", "RedScrap v21.9.0"),
         # The following kwargs avoid PRAW complaining about async loops when running inside certain environments.
         check_for_async=False,
     )
@@ -1258,9 +1251,9 @@ class Exporter:
         # -------------------------------------------------
         citation_text = (
             "Cite this tool:<br/>"
-            "Tumiran, M. S., Abd Wahab, M. S., Jamal, J. A., & Othman, N. (2025). "
-            "RedScrap: Python Tool for Netnographic Data Collection (v1.0.0). "
-            "Zenodo. https://doi.org/10.5281/zenodo.16756945<br/>"
+            "Tumiran, M. S., Abd Wahab, M. S., Jamal, J. A., & Othman, N. (2026). "
+            "RedScrap: Python Tool for Netnographic Data Collection (Version 21.9.0) "
+            "[Computer software]. Zenodo. https://doi.org/10.5281/zenodo.22866437<br/>"
             "Corresponding author: saprimad@moh.gov.my"
         )
         story.append(Paragraph(citation_text, styles["Normal"]))
@@ -1357,7 +1350,7 @@ class GUI:
         self.posts = []
         self.root = tk.Tk()
         # Set a simplified window title
-        self.root.title("RedScrap")
+        self.root.title(f"RedScrap v{__version__}")
         self.root.geometry("800x600")
 
         # Input fields
