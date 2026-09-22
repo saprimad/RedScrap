@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use RedScrap in your research, please cite the archived software release."
+title: "RedScrap: Python Tool for Netnographic Data Collection"
+type: software
+version: "2.1.9"
+date-released: "2026-09-22"
+authors:
+  - family-names: "Tumiran"
+    given-names: "Mad Sapri"
+  - family-names: "Abd Wahab"
+    given-names: "Mohd Shahezwan"
+  - family-names: "Jamal"
+    given-names: "Janattul Ain"
+  - family-names: "Othman"
+    given-names: "Nursyuhadah"
+repository-code: "https://github.com/saprimad/RedScrap"
+url: "https://github.com/saprimad/RedScrap"
+license: MIT
+keywords:
+  - netnography
+  - Reddit
+  - qualitative research
+  - digital ethnography
+  - sentiment analysis
+  - Python
+preferred-citation:
+  type: software
+  title: "RedScrap: Python Tool for Netnographic Data Collection"
+  authors:
+    - family-names: "Tumiran"
+      given-names: "Mad Sapri"
+    - family-names: "Abd Wahab"
+      given-names: "Mohd Shahezwan"
+    - family-names: "Jamal"
+      given-names: "Janattul Ain"
+    - family-names: "Othman"
+      given-names: "Nursyuhadah"
+  version: "1.0.0"
+  date-released: "2025-08-07"
+  doi: "10.5281/zenodo.16756945"
