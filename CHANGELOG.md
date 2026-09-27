@@ -2,6 +2,11 @@
 
 All notable changes to RedScrap are documented in this file.
 
+## Unreleased
+
+- Excel exports now put the Reddit discussion permalink in `Thread URL` and
+  preserve the original post destination in a new `Source URL` column.
+
 ## [21.9.0] - 2026-09-21
 
 ### Added

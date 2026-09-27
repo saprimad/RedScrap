@@ -19,7 +19,7 @@ RedScrap was developed as part of a PhD research project at the Faculty of Pharm
 - Filtering of returned search results by start and end dates.
 - Display of matching threads with a quick summary of thread, comment and upvote counts.
 - Export of comments from a selected thread or all returned threads to `.xlsx`.
-- Comment-level fields including thread ID, date, post type, thread title, thread URL, author, comment text and upvotes.
+- Comment-level fields including thread ID, date, post type, thread title, Reddit discussion URL, original source URL, author, comment text and upvotes.
 - Exploratory PDF report containing descriptive, engagement, temporal, yearly and lexical summaries, tables and visualisations.
 - English- and Malay-aware word-frequency processing with unigram and bigram support.
 - Optional binary sentiment classification using a fitted TF-IDF vectorizer and logistic-regression model.
@@ -134,6 +134,11 @@ Keep the `client_secret` and `reddit_config.json` private. Never share another p
    - **Scrape Selected Thread** to export one thread's comments to Excel.
    - **Scrape All Threads** to export comments from all returned threads to Excel.
 6. Select the output filename and location when prompted.
+
+In new Excel exports, **Thread URL** opens the Reddit discussion. **Source URL**
+retains the original post destination, such as the linked news article. For a
+Reddit self-post the two URLs may point to the same discussion. Existing Excel
+files are not changed by this update.
 
 ## Search scope and limitations
 

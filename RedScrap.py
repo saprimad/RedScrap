@@ -106,6 +106,19 @@ from xml.sax.saxutils import escape as _xml_escape  # for safe HTML escaping
 
 __version__ = "21.9.0"
 
+
+def thread_urls(submission):
+    """Return the Reddit discussion URL and the post's original destination."""
+    permalink = getattr(submission, "permalink", "") or ""
+    discussion_url = (
+        f"https://www.reddit.com{permalink}"
+        if permalink.startswith("/") else permalink
+    )
+    return {
+        "Thread URL": discussion_url,
+        "Source URL": getattr(submission, "url", "") or "",
+    }
+
 # ------------------------------------------------------------------
 # Helper functions to escape dynamic text and build safe Paragraphs
 # These functions avoid ReportLab 'paraparser' errors by escaping
@@ -1269,7 +1282,7 @@ class Exporter:
             df = pd.DataFrame(comments)
             # If the expected columns exist, reorder to the final specification
             expected_cols = [
-                "Thread ID", "Date", "Post Type", "Thread Title", "Thread URL",
+                "Thread ID", "Date", "Post Type", "Thread Title", "Thread URL", "Source URL",
                 "Author", "Comment", "Upvotes"
             ]
             for col in expected_cols:
@@ -1321,7 +1334,7 @@ class Exporter:
                     "Date": datetime.utcfromtimestamp(getattr(c, 'created_utc', time.time())).strftime('%Y-%m-%d %H:%M:%S'),
                     "Post Type": post_type,
                     "Thread Title": sub.title,
-                    "Thread URL": getattr(sub, 'url', ''),
+                    **thread_urls(sub),
                     "Author": str(c.author),
                     "Comment": c.body if c.body else '',
                     "Upvotes": c.score
@@ -1330,7 +1343,7 @@ class Exporter:
             df = pd.DataFrame(all_data)
             # Order columns as specified
             cols = [
-                "Thread ID", "Date", "Post Type", "Thread Title", "Thread URL", "Author", "Comment", "Upvotes"
+                "Thread ID", "Date", "Post Type", "Thread Title", "Thread URL", "Source URL", "Author", "Comment", "Upvotes"
             ]
             df = df[cols]
             df.to_excel(path, index=False)
@@ -1567,7 +1580,7 @@ class GUI:
                     "Date": datetime.utcfromtimestamp(getattr(c, 'created_utc', time.time())).strftime('%Y-%m-%d %H:%M:%S'),
                     "Post Type": post_type,
                     "Thread Title": sub.title,
-                    "Thread URL": getattr(sub, 'url', ''),
+                    **thread_urls(sub),
                     "Author": str(c.author),
                     "Comment": c.body if c.body else '',
                     "Upvotes": c.score
@@ -1656,7 +1669,7 @@ class GUI:
                         "Date": datetime.utcfromtimestamp(getattr(c, 'created_utc', time.time())).strftime('%Y-%m-%d %H:%M:%S'),
                         "Post Type": post_type,
                         "Thread Title": sub.title,
-                        "Thread URL": getattr(sub, 'url', ''),
+                        **thread_urls(sub),
                         "Author": str(c.author),
                         "Comment": c.body if c.body else '',
                         "Upvotes": c.score
@@ -1668,7 +1681,7 @@ class GUI:
                 df = pd.DataFrame(all_data)
                 try:
                     cols = [
-                        "Thread ID", "Date", "Post Type", "Thread Title", "Thread URL",
+                        "Thread ID", "Date", "Post Type", "Thread Title", "Thread URL", "Source URL",
                         "Author", "Comment", "Upvotes"
                     ]
                     df = df[cols]
@@ -1834,7 +1847,7 @@ class GUI:
                 "Date": datetime.utcfromtimestamp(getattr(c, 'created_utc', time.time())).strftime('%Y-%m-%d %H:%M:%S'),
                 "Post Type": post_type,
                 "Thread Title": sub.title,
-                "Thread URL": getattr(sub, 'url', ''),
+                **thread_urls(sub),
                 "Author": str(c.author),
                 "Comment": c.body if c.body else '',
                 "Upvotes": c.score
