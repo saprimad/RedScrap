@@ -27,7 +27,7 @@ import os
 import textwrap  # for safely truncating long titles and comments
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from collections import Counter, defaultdict
 """
 This module attempts to import tkinter for GUI functionality. If tkinter
@@ -274,18 +274,18 @@ class Scraper:
         """Search for threads matching the keywords between start_date and end_date."""
         query = " OR ".join(self.keywords) if self.keywords else "*"
         results = []
-        # Convert dates to UNIX timestamps
+        # Use UTC boundaries, including the entire selected end date.
         try:
-            start_ts = int(time.mktime(datetime.strptime(self.start_date, "%Y-%m-%d").timetuple()))
+            start_ts = datetime.strptime(self.start_date, "%Y-%m-%d").replace(tzinfo=timezone.utc).timestamp()
         except Exception:
             start_ts = 0
         try:
-            end_ts = int(time.mktime(datetime.strptime(self.end_date, "%Y-%m-%d").timetuple()))
+            end_ts = (datetime.strptime(self.end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc) + timedelta(days=1)).timestamp()
         except Exception:
-            end_ts = int(time.time())
+            end_ts = int(time.time()) + 1
         for submission in self.reddit.subreddit(self.subreddit).search(query, sort="new", limit=limit):
-            created = int(submission.created_utc)
-            if start_ts <= created <= end_ts:
+            created = submission.created_utc
+            if start_ts <= created < end_ts:
                 results.append(submission)
         self.posts = results
         return results
