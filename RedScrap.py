@@ -1692,6 +1692,7 @@ class GUI:
 
     def search_threads(self):
         """Fetch threads based on user input and populate the listbox."""
+        started_at = time.perf_counter()
         sub = self.subreddit_entry.get().strip()
         kws = [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()]
         start = self.start_entry.get().strip()
@@ -1735,7 +1736,13 @@ class GUI:
             self.listbox.insert(tk.END, f"{title} ({subm.num_comments} comments)")
 
         # Update summary info
+        elapsed = time.perf_counter() - started_at
+        self.last_search_seconds = elapsed
         self.update_summary()
+        self.log_message(
+            f"Search completed in {elapsed:.2f} seconds "
+            f"({len(self.posts)} matching threads; {self.search_retrieved_count} submissions examined)."
+        )
 
     # ------------------------------------------------------------------
     # Long‑running tasks wrappers and implementations
@@ -1764,6 +1771,7 @@ class GUI:
 
     def scrape_selected_task(self, index: int, path: str):
         """Perform the scraping of a single thread and save to Excel."""
+        started_at = time.perf_counter()
         # Reset cancellation flag
         self.cancel_requested = False
         # Start progress bar if available
@@ -1826,7 +1834,12 @@ class GUI:
                 Exporter.comments_to_excel(comments, path)
                 # Use the GUI thread to show success message
                 self.root.after(0, lambda: messagebox.showinfo("Success", f"Comments saved to {path}"))
-                self.log_message("Selected thread scrape completed successfully.")
+                elapsed = time.perf_counter() - started_at
+                self.last_export_seconds = elapsed
+                self.log_message(
+                    f"Selected thread scrape completed successfully in {elapsed:.2f} seconds "
+                    f"({len(comments)} comments exported)."
+                )
         except Exception as exc:
             # Show error message in the GUI thread
             self.root.after(0, lambda: messagebox.showerror("Error", f"Failed to scrape selected thread: {exc}"))
@@ -1855,6 +1868,7 @@ class GUI:
 
     def scrape_all_task(self, path: str):
         """Scrape comments from all threads and save to Excel."""
+        started_at = time.perf_counter()
         self.cancel_requested = False
         if self.progress is not None:
             try:
@@ -1919,7 +1933,12 @@ class GUI:
                     df = df[cols]
                     df.to_excel(path, index=False)
                     self.root.after(0, lambda: messagebox.showinfo("Success", f"All threads' comments saved to {path}"))
-                    self.log_message("All threads scrape completed successfully.")
+                    elapsed = time.perf_counter() - started_at
+                self.last_export_seconds = elapsed
+                self.log_message(
+                    f"All threads scrape completed successfully in {elapsed:.2f} seconds "
+                    f"({len(all_data)} comments exported from {len(self.posts)} threads)."
+                )
                 except Exception as exc:
                     self.root.after(0, lambda: messagebox.showerror("Error", f"Failed to save all threads' comments: {exc}"))
                     self.log_message(f"Error saving all threads' comments: {exc}")
@@ -1949,6 +1968,7 @@ class GUI:
 
     def generate_report_task(self, path: str):
         """Generate the PDF report in a background thread."""
+        started_at = time.perf_counter()
         self.cancel_requested = False
         if self.progress is not None:
             try:
@@ -1972,7 +1992,12 @@ class GUI:
                 Exporter.generate_pdf_enhanced(self.posts, analyzer, path, meta)
                 # success message
                 self.root.after(0, lambda: messagebox.showinfo("Success", f"Early report saved to {path}"))
-                self.log_message("Report generated successfully.")
+                elapsed = time.perf_counter() - started_at
+                self.last_report_seconds = elapsed
+                self.log_message(
+                    f"Report generated successfully in {elapsed:.2f} seconds "
+                    f"for {len(self.posts)} threads."
+                )
         except Exception as exc:
             self.root.after(0, lambda: messagebox.showerror("Error", f"Failed to generate report: {exc}"))
             self.log_message(f"Error generating report: {exc}")
@@ -2004,7 +2029,14 @@ class GUI:
         path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
         if path:
             try:
+                started_at = time.perf_counter()
                 Exporter.generate_pdf_enhanced(self.posts, analyzer, path, meta)
+                elapsed = time.perf_counter() - started_at
+                self.last_report_seconds = elapsed
+                self.log_message(
+                    f"Report generated successfully in {elapsed:.2f} seconds "
+                    f"for {len(self.posts)} threads."
+                )
                 messagebox.showinfo("Success", f"Early report saved to {path}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to generate report: {e}")
@@ -2019,9 +2051,14 @@ class GUI:
             f" | Search examined {self.search_retrieved_count} submissions"
             + (f" | Limit reached: Yes ({self.search_limit})" if self.search_limit_reached else "")
         )
+        timing_status = (
+            f" | Search time: {self.last_search_seconds:.2f}s"
+            if getattr(self, "last_search_seconds", None) is not None
+            else ""
+        )
         summary = (
             f"Found {total_threads} threads | ~{total_comments} comments | ~{total_upvotes} upvotes\n"
-            f"Average comments/thread: {avg_comments}{limit_status}"
+            f"Average comments/thread: {avg_comments}{limit_status}{timing_status}"
         )
         self.summary_label.config(text=summary)
 
