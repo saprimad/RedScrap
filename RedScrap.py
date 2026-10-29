@@ -1934,11 +1934,11 @@ class GUI:
                     df.to_excel(path, index=False)
                     self.root.after(0, lambda: messagebox.showinfo("Success", f"All threads' comments saved to {path}"))
                     elapsed = time.perf_counter() - started_at
-                self.last_export_seconds = elapsed
-                self.log_message(
-                    f"All threads scrape completed successfully in {elapsed:.2f} seconds "
-                    f"({len(all_data)} comments exported from {len(self.posts)} threads)."
-                )
+                    self.last_export_seconds = elapsed
+                    self.log_message(
+                        f"All threads scrape completed successfully in {elapsed:.2f} seconds "
+                        f"({len(all_data)} comments exported from {len(self.posts)} threads)."
+                    )
                 except Exception as exc:
                     self.root.after(0, lambda: messagebox.showerror("Error", f"Failed to save all threads' comments: {exc}"))
                     self.log_message(f"Error saving all threads' comments: {exc}")
