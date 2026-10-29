@@ -16,22 +16,16 @@ The **Early Report** is intended as an exploratory orientation tool. It provides
 
 ### Comparison with selected Reddit research approaches
 
-| Capability | PRAW | praw-cli | Reddit Data Tool | Communalytic | RedScrap |
-|---|---|---|---|---|---|
-| Primary interface | Python library | Command line | Browser | Web/no-code | Desktop GUI |
-| Programming knowledge required for routine use | Yes | Low–moderate CLI familiarity | No | No | No/minimal |
-| Reddit API-based retrieval | Yes | Yes | No (public JSON) | Yes | Yes, via PRAW |
-| Subreddit + keyword search | Requires coding | Yes | Limited/single-thread oriented | Yes | Yes |
-| Date-based filtering | Requires coding | Yes | Limited | Collection-period/search dependent | Yes |
-| Multi-thread comment retrieval | Requires coding | Yes | Limited by browser JSON/thread context | Yes | Yes |
-| Structured export | User-defined | JSON/JSONL/CSV/Markdown | CSV/HTML-style export | Platform export | Excel |
-| Built-in exploratory lexical summary | No | Filtering only | No | Analysis/visualisation available | Yes |
-| Built-in Early Report for dataset orientation | No | No | No | No equivalent RedScrap-style report identified | Yes |
-| Optional sentiment output | No | No | No | Platform analysis dependent | Yes, exploratory |
-| Researcher-configurable stop-word filtering | Requires coding | CLI/filter configuration | No | Not identified in reviewed collector documentation | Yes |
-| Intended low-barrier social/health-science workflow | No | Partial | Partial | Yes | Yes |
+| Tool | Interface / access model | Coding required for routine use | Main workflow | Data handling |
+|---|---|---|---|---|
+| PRAW | Open-source Python library | Yes | Programmable Reddit acquisition | Local code and researcher-managed storage |
+| Reddit Data Tool | Browser-based tool | No | Lightweight thread export and inspection | Local-browser workflow |
+| Communalytic | Web/no-code; free and paid tiers | No | Data collection with integrated analysis and visualisation | Server-hosted datasets |
+| RedScrap | Local desktop GUI | No/minimal | Reddit retrieval, structured Excel export and Early Report orientation | Researcher-controlled local storage |
 
-This comparison is intended to clarify positioning rather than to claim that RedScrap supersedes other tools. PRAW offers substantially greater programmatic flexibility, praw-cli provides strong command-line extraction and reproducibility features, Reddit Data Tool provides lightweight browser-based thread export, and Communalytic offers a broader no-code computational social-science environment. RedScrap's contribution is its focused local desktop workflow for researchers who want to retrieve Reddit data, inspect an Early Report, and export structured data for subsequent qualitative, quantitative or mixed-method analysis with minimal computing expertise.
+This comparison is intended to clarify workflow positioning rather than rank the tools or claim that RedScrap supersedes them. PRAW provides substantially greater programmatic flexibility, Reddit Data Tool offers lightweight browser-based thread export, and Communalytic provides a broader no-code computational social-science environment. RedScrap is positioned as a focused local desktop workflow designed to reduce routine technical barriers for researchers who want to retrieve Reddit data, inspect an exploratory Early Report and export structured data for subsequent qualitative, quantitative or mixed-method analysis.
+
+The data-handling distinction should not be interpreted as a claim that local storage is inherently secure. Researcher-controlled local storage may reduce third-party data transfer compared with server-hosted workflows, but privacy and security still depend on the researcher's device, institutional controls and data-management practices.
 
 ## Development background
 
