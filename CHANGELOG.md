@@ -4,6 +4,9 @@ All notable changes to RedScrap are documented in this file.
 
 ## Unreleased
 
+- Added a **Lexical Settings** dialog that lets researchers enable or disable built-in English and Malay stop-word lists and add study-specific stop words without editing the source code.
+- Custom lexical settings affect word-frequency analysis only; raw exported Reddit text remains unchanged.
+- Clarified that RedScrap provides configurable lexical preprocessing rather than automatic language identification, stemming, lemmatisation or full multilingual NLP.
 - Strengthened the generated PDF sentiment warning to state that the Sentiment140-trained model has not been externally validated for Reddit discourse, Malay-language content or the present dataset.
 - Reworded sentiment narrative output to remain descriptive rather than inferential (for example, reporting relative classification proportions instead of stating that overall sentiment "leans" positive or negative).
 - Added a GUI warning when Reddit returns the configured 200-submission search cap before date filtering.
