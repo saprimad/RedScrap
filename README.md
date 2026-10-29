@@ -21,7 +21,7 @@ RedScrap was developed as part of a PhD research project at the Faculty of Pharm
 - Export of comments from a selected thread or all returned threads to `.xlsx`.
 - Comment-level fields including thread ID, date, post type, thread title, Reddit discussion URL, original source URL, author, comment text and upvotes.
 - Exploratory PDF report containing descriptive, engagement, temporal, yearly and lexical summaries, tables and visualisations.
-- English- and Malay-aware word-frequency processing with unigram and bigram support.
+- Configurable lexical preprocessing for word-frequency analysis, with built-in English and Malay stop-word lists plus researcher-supplied custom stop words.
 - Optional binary sentiment classification using a fitted TF-IDF vectorizer and logistic-regression model.
 - Background processing, progress indication and task cancellation for longer operations.
 
@@ -128,8 +128,9 @@ Keep the `client_secret` and `reddit_config.json` private. Never share another p
 1. Enter the subreddit name without `r/`.
 2. Enter one or more comma-separated keywords.
 3. Enter the start and end dates in `YYYY-MM-DD` format.
-4. Select **Search Threads**.
-5. Choose one of the following actions:
+4. Optional: select **Lexical Settings** to enable or disable the built-in English and Malay stop-word lists and to add study-specific stop words (comma-separated or one per line).
+5. Select **Search Threads**.
+6. Choose one of the following actions:
    - **Early Report** to create an exploratory PDF report.
    - **Scrape Selected Thread** to export one thread's comments to Excel.
    - **Scrape All Threads** to export comments from all returned threads to Excel.
@@ -150,6 +151,12 @@ files are not changed by this update.
 - Loading all nested comments can take considerable time for large discussions.
 - Deleted, removed or inaccessible content may be missing or represented incompletely.
 - The estimated counts displayed in the interface may differ from the final exported number of accessible comments.
+
+## Lexical filtering and language scope
+
+RedScrap uses configurable lexical preprocessing for its word-frequency output. Built-in English and Malay stop-word lists are enabled by default because early development and testing in the Malaysian context showed that common function words could contribute substantial lexical noise and reduce the interpretability of frequency summaries. Researchers may disable either built-in list and may paste additional study-specific stop words directly through **Lexical Settings**.
+
+These settings affect lexical word-frequency output only and do not alter the raw exported Reddit text. This functionality should be understood as configurable preprocessing rather than full multilingual natural-language processing; RedScrap does not currently perform automatic language identification, stemming or lemmatisation.
 
 ## Sentiment-analysis limitation
 
