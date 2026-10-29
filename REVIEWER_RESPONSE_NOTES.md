@@ -125,3 +125,35 @@ These terms were entered into **Lexical Settings → Additional stop words** and
 - Regenerated PDF reflected the custom lexical filtering.
 
 **Status: PASS**
+
+
+---
+
+## Reviewer A4 — Secure Reddit API credential storage
+
+### Reviewer concern
+The reviewer noted that Reddit API credentials were stored in plaintext and requested a safer credential-management approach.
+
+### Software changes
+- The Reddit `client_secret` is no longer persisted in plaintext inside `reddit_config.json`.
+- RedScrap now uses Python `keyring` to store the client secret in the operating-system credential store when available.
+- The local configuration file retains only non-secret settings such as `client_id` and `user_agent`.
+- Existing installations with a legacy plaintext `client_secret` are migrated automatically on the next successful launch. RedScrap attempts to store the secret securely and rewrites the configuration file without the secret.
+- Environment variables are supported as an alternative credential source.
+- If no secure credential store or environment secret is available, RedScrap prompts for the secret for the current session rather than writing it back to plaintext storage.
+- `requirements.txt` and the README were updated to document the revised credential workflow.
+
+### Functional testing
+Platform:
+- Windows
+
+Verification performed:
+- RedScrap launched successfully after the credential migration.
+- The application did not require repeated credential entry after migration.
+- The resulting `reddit_config.json` contained only `client_id` and `user_agent`.
+- No plaintext `client_secret` remained in the configuration file.
+
+### Security interpretation
+The revised approach materially reduces the risk of accidental disclosure through copied project folders, source repositories or local plaintext configuration files. Secure storage remains dependent on the security of the host operating-system account.
+
+**Status: PASS**
