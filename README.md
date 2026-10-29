@@ -13,6 +13,26 @@ RedScrap is designed to lower the technical barrier to Reddit-based research, pa
 
 The **Early Report** is intended as an exploratory orientation tool. It provides researchers with a rapid overview of the retrieved dataset before they commit to more intensive qualitative, quantitative or mixed-method analysis. The report summarises broad characteristics such as thread volume, engagement, temporal distribution, lexical patterns and optional exploratory sentiment output. It is not intended to replace formal analytical procedures.
 
+
+### Comparison with selected Reddit research approaches
+
+| Capability | PRAW | praw-cli | Reddit Data Tool | Communalytic | RedScrap |
+|---|---|---|---|---|---|
+| Primary interface | Python library | Command line | Browser | Web/no-code | Desktop GUI |
+| Programming knowledge required for routine use | Yes | Low–moderate CLI familiarity | No | No | No/minimal |
+| Reddit API-based retrieval | Yes | Yes | No (public JSON) | Yes | Yes, via PRAW |
+| Subreddit + keyword search | Requires coding | Yes | Limited/single-thread oriented | Yes | Yes |
+| Date-based filtering | Requires coding | Yes | Limited | Collection-period/search dependent | Yes |
+| Multi-thread comment retrieval | Requires coding | Yes | Limited by browser JSON/thread context | Yes | Yes |
+| Structured export | User-defined | JSON/JSONL/CSV/Markdown | CSV/HTML-style export | Platform export | Excel |
+| Built-in exploratory lexical summary | No | Filtering only | No | Analysis/visualisation available | Yes |
+| Built-in Early Report for dataset orientation | No | No | No | No equivalent RedScrap-style report identified | Yes |
+| Optional sentiment output | No | No | No | Platform analysis dependent | Yes, exploratory |
+| Researcher-configurable stop-word filtering | Requires coding | CLI/filter configuration | No | Not identified in reviewed collector documentation | Yes |
+| Intended low-barrier social/health-science workflow | No | Partial | Partial | Yes | Yes |
+
+This comparison is intended to clarify positioning rather than to claim that RedScrap supersedes other tools. PRAW offers substantially greater programmatic flexibility, praw-cli provides strong command-line extraction and reproducibility features, Reddit Data Tool provides lightweight browser-based thread export, and Communalytic offers a broader no-code computational social-science environment. RedScrap's contribution is its focused local desktop workflow for researchers who want to retrieve Reddit data, inspect an Early Report, and export structured data for subsequent qualitative, quantitative or mixed-method analysis with minimal computing expertise.
+
 ## Development background
 
 RedScrap was developed as part of a PhD research project at the Faculty of Pharmacy, Universiti Teknologi MARA (UiTM), Malaysia, to facilitate the systematic collection of Reddit data for netnographic research. The software has since undergone continuous development, with improvements to its data-extraction capabilities, filtering options, user interface, output formats and overall usability. RedScrap is openly archived on Zenodo to promote research transparency, reproducibility, software reuse and formal citation.
