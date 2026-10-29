@@ -198,4 +198,13 @@ The manuscript will:
 - clarify the role of the Early Report as an orientation rather than final analytical tool; and
 - add a comparison table contrasting RedScrap with existing Reddit data-collection approaches in terms of technical requirements, graphical accessibility, retrieval workflow, export options and built-in exploratory analysis.
 
-**Status: Documentation updated; comparison table pending finalisation.**
+### Comparison table finalised
+The comparison was refined against four representative approaches:
+- **PRAW** — flexible Python API wrapper that requires Python knowledge for routine use.
+- **praw-cli** — command-line Reddit extraction with strong filtering, export and reproducibility features.
+- **Reddit Data Tool** — lightweight browser-based thread export using public Reddit JSON rather than OAuth/API client access.
+- **Communalytic** — no-code computational social-science platform with Reddit collectors.
+
+The comparison avoids claiming that RedScrap is the only low-code/no-code Reddit research tool. Instead, RedScrap is positioned as a focused local desktop workflow combining API-based retrieval, structured Excel export, researcher-configurable lexical preprocessing and an Early Report intended for rapid dataset orientation before more intensive analysis.
+
+**Status: PASS — contribution clarified and comparison table added to README; manuscript table to use the same evidence-based positioning.**
