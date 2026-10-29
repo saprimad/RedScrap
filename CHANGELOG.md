@@ -4,6 +4,9 @@ All notable changes to RedScrap are documented in this file.
 
 ## Unreleased
 
+- Added a GUI warning when Reddit returns the configured 200-submission search cap before date filtering.
+- Added search diagnostics to the GUI summary, including the number of submissions examined and an explicit limit-reached indicator.
+- Documented that reaching the cap may exclude older posts from the selected date range and does not indicate exhaustive historical retrieval.
 - Excel exports now put the Reddit discussion permalink in `Thread URL` and
   preserve the original post destination in a new `Source URL` column.
 
