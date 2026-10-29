@@ -27,6 +27,7 @@ import os
 import textwrap  # for safely truncating long titles and comments
 import json
 import time
+import getpass
 from datetime import datetime, timedelta, timezone
 from collections import Counter, defaultdict
 """
@@ -65,6 +66,13 @@ import threading
 
 # Conditional imports for NLP (Uncomment for actual model loading)
 import joblib
+
+try:
+    import keyring
+    from keyring.errors import KeyringError
+except Exception:
+    keyring = None
+    KeyringError = Exception
 
 
 try:
@@ -159,100 +167,179 @@ def make_paragraph(text: str, style, color: str | None = None, max_chars: int = 
 # =====================================================
 
 CONFIG_FILE = "reddit_config.json"
+KEYRING_SERVICE = "RedScrap"
+ENV_CLIENT_ID = "REDSCRAP_REDDIT_CLIENT_ID"
+ENV_CLIENT_SECRET = "REDSCRAP_REDDIT_CLIENT_SECRET"
+ENV_USER_AGENT = "REDSCRAP_REDDIT_USER_AGENT"
+
+
+def _write_public_config(client_id, user_agent):
+    """Persist only non-secret Reddit settings to the local config file."""
+    cfg = {
+        "client_id": client_id,
+        "user_agent": user_agent or "RedScrap v21.9.0",
+    }
+    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, indent=2)
+
+
+def _store_secret(client_id, client_secret):
+    """Store the Reddit client secret in the operating-system credential store."""
+    if keyring is None:
+        return False
+    try:
+        keyring.set_password(KEYRING_SERVICE, client_id, client_secret)
+        return True
+    except KeyringError:
+        return False
+    except Exception:
+        return False
+
+
+def _load_secret(client_id):
+    """Load the Reddit client secret from the operating-system credential store."""
+    if keyring is None or not client_id:
+        return None
+    try:
+        return keyring.get_password(KEYRING_SERVICE, client_id)
+    except KeyringError:
+        return None
+    except Exception:
+        return None
+
+
+def _prompt_for_credentials(prefill_client_id="", prefill_user_agent="RedScrap v21.9.0"):
+    """Prompt for Reddit API credentials and return them for the current session."""
+    creds = {}
+
+    if HAS_TK and tk is not None:
+        try:
+            login = tk.Tk()
+        except Exception:
+            login = None
+
+        if login is not None:
+            login.title("RedScrap Login")
+            login.resizable(False, False)
+            tk.Label(
+                login,
+                text="Enter your Reddit API credentials",
+                font=("Arial", 12, "bold"),
+                pady=5,
+            ).pack()
+            tk.Label(login, text="Client ID:").pack()
+            cid_entry = tk.Entry(login, width=40)
+            cid_entry.insert(0, prefill_client_id or "")
+            cid_entry.pack(padx=10, pady=2)
+            tk.Label(login, text="Client Secret:").pack()
+            csec_entry = tk.Entry(login, width=40, show="*")
+            csec_entry.pack(padx=10, pady=2)
+            tk.Label(login, text="User Agent:").pack()
+            ua_entry = tk.Entry(login, width=40)
+            ua_entry.insert(0, prefill_user_agent or "RedScrap v21.9.0")
+            ua_entry.pack(padx=10, pady=2)
+
+            def save_and_continue():
+                cid_val = cid_entry.get().strip()
+                csec_val = csec_entry.get().strip()
+                ua_val = ua_entry.get().strip() or "RedScrap v21.9.0"
+                if not cid_val or not csec_val:
+                    messagebox.showerror("Error", "Please provide both Client ID and Client Secret")
+                    return
+                creds["client_id"] = cid_val
+                creds["client_secret"] = csec_val
+                creds["user_agent"] = ua_val
+                login.destroy()
+
+            tk.Button(
+                login,
+                text="Save & Continue",
+                command=save_and_continue,
+                bg="#4CAF50",
+                fg="white",
+                padx=10,
+                pady=5,
+            ).pack(pady=10)
+            login.mainloop()
+
+            if creds:
+                return creds
+            raise RuntimeError("Reddit credential entry was cancelled.")
+
+    print("Please enter your Reddit API credentials.")
+    cid = input(f"Enter your Reddit Client ID [{prefill_client_id}]: ").strip() or prefill_client_id
+    csec = getpass.getpass("Enter your Reddit Client Secret: ").strip()
+    user_agent = (
+        input(f"Enter a user agent [{prefill_user_agent}]: ").strip()
+        or prefill_user_agent
+        or "RedScrap v21.9.0"
+    )
+    if not cid or not csec:
+        raise RuntimeError("Reddit credentials are required. Please provide both client_id and client_secret.")
+    return {
+        "client_id": cid,
+        "client_secret": csec,
+        "user_agent": user_agent,
+    }
+
 
 def get_reddit():
-    """Prompt the user for Reddit API credentials if not already stored.
+    """Create a PRAW Reddit client without persisting the client secret in plaintext.
 
-    Returns a praw.Reddit instance configured with the user's credentials.
+    RedScrap stores non-secret settings in reddit_config.json and stores the
+    client secret in the operating-system credential store when available.
+    Environment variables can also provide credentials. Legacy plaintext config
+    files are migrated automatically on first use.
     """
-    # First check whether a config file already exists. If so, load it.
+    cfg = {}
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            cfg = json.load(f)
+        try:
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            cfg = {}
+
+    client_id = os.environ.get(ENV_CLIENT_ID, "").strip() or str(cfg.get("client_id", "")).strip()
+    user_agent = (
+        os.environ.get(ENV_USER_AGENT, "").strip()
+        or str(cfg.get("user_agent", "")).strip()
+        or "RedScrap v21.9.0"
+    )
+    client_secret = os.environ.get(ENV_CLIENT_SECRET, "").strip() or None
+
+    legacy_secret = str(cfg.get("client_secret", "")).strip()
+    if not client_secret and legacy_secret:
+        client_secret = legacy_secret
+        _store_secret(client_id, legacy_secret)
+        if client_id:
+            _write_public_config(client_id, user_agent)
+
+    if not client_secret and client_id:
+        client_secret = _load_secret(client_id)
+
+    if not client_id or not client_secret:
+        entered = _prompt_for_credentials(client_id, user_agent)
+        client_id = entered["client_id"]
+        client_secret = entered["client_secret"]
+        user_agent = entered["user_agent"]
+        _write_public_config(client_id, user_agent)
+        stored = _store_secret(client_id, client_secret)
+        if not stored:
+            print(
+                "Warning: the operating-system credential store is unavailable. "
+                "The Reddit client secret was not written to reddit_config.json and "
+                "will need to be supplied again on the next run unless the "
+                f"{ENV_CLIENT_SECRET} environment variable is set."
+            )
     else:
-        # If tkinter is available, use a GUI dialog; otherwise fall back to console prompts.
-        creds = {}
-        if HAS_TK and tk is not None:
-            # Prompt user for credentials via a simple Tkinter dialog
-            try:
-                login = tk.Tk()
-            except Exception:
-                # Could not create a Tk root (likely due to missing display)
-                print(
-                    "tkinter is installed but a display could not be initialized. "
-                    "Falling back to console input for credentials."
-                )
-                cid = input("Enter your Reddit Client ID: ").strip()
-                csec = input("Enter your Reddit Client Secret: ").strip()
-                user_agent = input("Enter a user agent (default: 'RedScrap v21.9.0'): ").strip() or "RedScrap v21.9.0"
-                if not cid or not csec:
-                    raise RuntimeError(
-                        "Reddit credentials are required. Please provide both client_id and client_secret."
-                    )
-                creds["client_id"] = cid
-                creds["client_secret"] = csec
-                creds["user_agent"] = user_agent
-                with open(CONFIG_FILE, "w") as f:
-                    json.dump(creds, f)
-            else:
-                login.title("RedScrap Login")
-                login.resizable(False, False)
-                tk.Label(login, text="Enter your Reddit API credentials", font=("Arial", 12, "bold"), pady=5).pack()
-                tk.Label(login, text="Client ID:").pack()
-                cid_entry = tk.Entry(login, width=40)
-                cid_entry.pack(padx=10, pady=2)
-                tk.Label(login, text="Client Secret:").pack()
-                csec_entry = tk.Entry(login, width=40, show="*")
-                csec_entry.pack(padx=10, pady=2)
+        _write_public_config(client_id, user_agent)
 
-                def save_and_continue():
-                    cid_val = cid_entry.get().strip()
-                    csec_val = csec_entry.get().strip()
-                    if not cid_val or not csec_val:
-                        messagebox.showerror("Error", "Please provide both Client ID and Client Secret")
-                        return
-                    creds["client_id"] = cid_val
-                    creds["client_secret"] = csec_val
-                    creds["user_agent"] = "RedScrap v21.9.0"
-                    with open(CONFIG_FILE, "w") as f:
-                        json.dump(creds, f)
-                    login.destroy()
-
-                tk.Button(
-                    login,
-                    text="Save & Continue",
-                    command=save_and_continue,
-                    bg="#4CAF50",
-                    fg="white",
-                    padx=10,
-                    pady=5,
-                ).pack(pady=10)
-                login.mainloop()
-        else:
-            # Console-based input: useful on headless servers where tkinter isn't available.
-            print("tkinter is not available; please enter your Reddit API credentials in the console.")
-            cid = input("Enter your Reddit Client ID: ").strip()
-            csec = input("Enter your Reddit Client Secret: ").strip()
-            user_agent = input("Enter a user agent (default: 'RedScrap v21.9.0'): ").strip() or "RedScrap v21.9.0"
-            if not cid or not csec:
-                raise RuntimeError(
-                    "Reddit credentials are required. Please provide both client_id and client_secret."
-                )
-            creds["client_id"] = cid
-            creds["client_secret"] = csec
-            creds["user_agent"] = user_agent
-            with open(CONFIG_FILE, "w") as f:
-                json.dump(creds, f)
-        cfg = creds
-    # When constructing the Reddit instance, it's useful to disable async checks to avoid warnings.
     return praw.Reddit(
-        client_id=cfg["client_id"],
-        client_secret=cfg["client_secret"],
-        user_agent=cfg.get("user_agent", "RedScrap v21.9.0"),
-        # The following kwargs avoid PRAW complaining about async loops when running inside certain environments.
+        client_id=client_id,
+        client_secret=client_secret,
+        user_agent=user_agent,
         check_for_async=False,
     )
-
 
 # =====================================================
 # Scraper
