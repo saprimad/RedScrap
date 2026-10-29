@@ -1,20 +1,26 @@
 # RedScrap Software Evaluation
 
-## Purpose
+## Overview
 
-This document records the functional and runtime evaluation performed in response to reviewer feedback requesting clearer software test cases and performance evidence.
+This document records a functional and runtime evaluation of RedScrap under reproducible, researcher-facing test conditions.
 
-The evaluation is intended to document observed end-to-end runtime and process success under reproducible test conditions. It is not intended as a hardware-independent benchmark.
+The purpose is to show that the main workflow completes successfully across datasets of different sizes and to document observed end-to-end runtime for search/retrieval, Early Report generation and Excel export. These results are not intended as hardware-independent performance guarantees.
+
+## Evaluation environment
+
+The tests were conducted on Windows using the desktop GUI and a single RedScrap instance. All runs used the live Reddit service through PRAW and were performed sequentially.
+
+Because Reddit retrieval depends on an external API and network conditions, search timings should be interpreted as end-to-end observed latency rather than pure local CPU-processing time.
 
 ## Runtime instrumentation
 
-RedScrap uses Python's `time.perf_counter()` to record elapsed runtime for three stages:
+RedScrap uses Python's `time.perf_counter()` to record elapsed runtime for three user-facing stages:
 
 1. search/retrieval;
 2. Early Report generation; and
 3. Excel export.
 
-These measurements include the user-visible end-to-end duration of each stage. Search runtime therefore includes external Reddit/PRAW/API and network latency as well as local filtering and interface processing.
+The timing implementation is contained directly in `RedScrap.py`.
 
 ## Test configuration
 
@@ -47,23 +53,22 @@ Date windows:
 | 2 years | 2 | 200 | 3,137 | 200 | 10.23 | 93.47 | 0.65 | PASS |
 | 2 years | 3 | 200 | 3,138 | 200 | 7.27 | 96.54 | 0.65 | PASS |
 
-## First-search latency after a fresh launch
+## Key findings
+
+- Every documented run completed the full workflow successfully.
+- Early Report generation increased with workload size, as expected.
+- Excel export remained short across the tested datasets.
+- Repeated runs of comparable workloads produced similar report-generation and export times.
+- Search runtime was more variable because it includes external Reddit/PRAW and network latency.
+- Minor changes in exported comment counts between repeated runs are expected because Reddit is a live data source.
+
+## Fresh-launch first-search latency
 
 A pronounced first-search latency was observed after RedScrap had been fully closed and relaunched.
 
-For the 2-year scenario, the first search required 84.41 seconds, while subsequent searches of the same window required 10.23 and 7.27 seconds. The researcher additionally repeated the fresh-launch comparison using another keyword and again observed that the first search was slower than the second search.
+For the 2-year scenario, the first search required 84.41 seconds, while subsequent searches of the same window required 10.23 and 7.27 seconds. The researcher also repeated the fresh-launch comparison using another keyword and observed the same qualitative pattern: the first search after a fresh launch was slower than the second search.
 
-This pattern is therefore reproducible at the application-workflow level and is documented as a fresh-launch first-request/cold-start effect. However, RedScrap relies on Reddit/PRAW and the network during search, and the current instrumentation measures the complete end-to-end search stage. The observed initial delay should therefore not be interpreted as proof that the latency originates exclusively within RedScrap itself or exclusively within the Reddit API.
-
-## Functional outcome
-
-All documented runs completed successfully through the full workflow:
-
-- search/retrieval;
-- Early Report generation; and
-- Excel export.
-
-Report-generation time increased with the number of retrieved threads, while Excel export remained short for the tested datasets. Report and export times were relatively consistent across repeated runs of comparable workloads.
+This behaviour is therefore documented as a reproducible fresh-launch first-request/cold-start effect at the application-workflow level. However, the current timing covers the entire end-to-end search stage, which includes Reddit/PRAW and network activity. The observed initial delay should not be interpreted as proof that the latency originates exclusively within RedScrap or exclusively within the Reddit API.
 
 ## Dynamic-source note
 
@@ -71,10 +76,14 @@ Reddit is a live data source. Minor differences in comment counts between repeat
 
 ## Search-result cap
 
-The configured search limit is 200 submissions. A result of 200 matching threads/submissions should not be interpreted as exhaustive historical retrieval. The software provides an explicit warning when the configured cap is reached before the requested start-date boundary is reached.
+The configured search limit is 200 submissions. A result of 200 matching threads/submissions should not be interpreted as exhaustive historical retrieval.
+
+RedScrap provides an explicit warning when the configured cap is reached before the requested start-date boundary is reached.
 
 ## Reproducibility and audit trail
 
-The runtime implementation is available in `RedScrap.py`. Terminal logs or screenshots from the evaluation runs can be retained separately as supplementary audit evidence if required.
+The runtime implementation is available in `RedScrap.py`. This file records the test configuration and observed results used for the evaluation.
 
-Evaluation status: **PASS**
+Terminal logs and screenshots from the original runs may be retained separately as supplementary audit evidence when required.
+
+**Evaluation status: PASS**
