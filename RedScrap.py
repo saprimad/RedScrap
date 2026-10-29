@@ -269,6 +269,9 @@ class Scraper:
         self.start_date = start_date
         self.end_date = end_date
         self.posts = []
+        self.search_retrieved_count = 0
+        self.search_limit = None
+        self.search_limit_reached = False
 
     def fetch_threads(self, limit=200):
         """Search for threads matching the keywords between start_date and end_date."""
@@ -283,10 +286,16 @@ class Scraper:
             end_ts = (datetime.strptime(self.end_date, "%Y-%m-%d").replace(tzinfo=timezone.utc) + timedelta(days=1)).timestamp()
         except Exception:
             end_ts = int(time.time()) + 1
+        retrieved_count = 0
         for submission in self.reddit.subreddit(self.subreddit).search(query, sort="new", limit=limit):
+            retrieved_count += 1
             created = submission.created_utc
             if start_ts <= created < end_ts:
                 results.append(submission)
+
+        self.search_retrieved_count = retrieved_count
+        self.search_limit = limit
+        self.search_limit_reached = bool(limit is not None and retrieved_count >= limit)
         self.posts = results
         return results
 
@@ -1361,6 +1370,9 @@ class GUI:
     def __init__(self, reddit):
         self.reddit = reddit
         self.posts = []
+        self.search_retrieved_count = 0
+        self.search_limit = 200
+        self.search_limit_reached = False
         self.root = tk.Tk()
         # Set a simplified window title
         self.root.title(f"RedScrap v{__version__}")
@@ -1493,9 +1505,20 @@ class GUI:
         try:
             scraper = Scraper(self.reddit, sub, kws, start, end)
             self.posts = scraper.fetch_threads(limit=200)
+            self.search_retrieved_count = scraper.search_retrieved_count
+            self.search_limit = scraper.search_limit
+            self.search_limit_reached = scraper.search_limit_reached
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while searching: {e}")
             return
+        if self.search_limit_reached:
+            messagebox.showwarning(
+                "Search limit reached",
+                f"Reddit returned the maximum {self.search_limit} submissions examined by RedScrap. "
+                "Because date filtering is applied after retrieval, older posts within the selected "
+                "date range may not be included. Consider narrowing the keywords or date range."
+            )
+
         # Populate listbox
         self.listbox.delete(0, tk.END)
         for subm in self.posts:
@@ -1777,8 +1800,14 @@ class GUI:
         total_comments = sum(getattr(sub, 'num_comments', 0) for sub in self.posts)
         total_upvotes = sum(getattr(sub, 'score', 0) for sub in self.posts)
         avg_comments = round(total_comments / total_threads, 2) if total_threads else 0
-        summary = (f"Found {total_threads} threads | ~{total_comments} comments | ~{total_upvotes} upvotes\n"
-                   f"Average comments/thread: {avg_comments}")
+        limit_status = (
+            f" | Search examined {self.search_retrieved_count} submissions"
+            + (f" | Limit reached: Yes ({self.search_limit})" if self.search_limit_reached else "")
+        )
+        summary = (
+            f"Found {total_threads} threads | ~{total_comments} comments | ~{total_upvotes} upvotes\n"
+            f"Average comments/thread: {avg_comments}{limit_status}"
+        )
         self.summary_label.config(text=summary)
 
     # Helper to log messages with timestamp
