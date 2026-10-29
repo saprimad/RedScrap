@@ -1498,7 +1498,7 @@ class GUI:
         self.search_limit = 200
         self.search_limit_reached = False
         self.lexical_use_english = True
-        self.lexical_use_malay = True
+        self.lexical_use_malay = False
         self.lexical_custom_stopwords = []
         self.root = tk.Tk()
         # Set a simplified window title
@@ -1508,19 +1508,19 @@ class GUI:
         # Input fields
         tk.Label(self.root, text="Subreddit:").pack(anchor='w')
         self.subreddit_entry = tk.Entry(self.root, width=50)
-        self.subreddit_entry.insert(0, "malaysia")
         self.subreddit_entry.pack(fill='x', padx=5)
         tk.Label(self.root, text="Keywords (comma separated):").pack(anchor='w')
         self.keyword_entry = tk.Entry(self.root, width=50)
         self.keyword_entry.pack(fill='x', padx=5)
-        tk.Label(self.root, text="Start Date (YYYY-MM-DD):").pack(anchor='w')
+        tk.Label(self.root, text="Start Date (optional, YYYY-MM-DD):").pack(anchor='w')
         self.start_entry = tk.Entry(self.root, width=20)
-        self.start_entry.insert(0, "2015-01-01")
         self.start_entry.pack(padx=5)
-        tk.Label(self.root, text="End Date (YYYY-MM-DD):").pack(anchor='w')
+        tk.Label(self.root, text="End Date (optional, YYYY-MM-DD):").pack(anchor='w')
         self.end_entry = tk.Entry(self.root, width=20)
-        self.end_entry.insert(0, "2024-12-31")
         self.end_entry.pack(padx=5)
+
+        self._set_entry_placeholder(self.start_entry, "YYYY-MM-DD")
+        self._set_entry_placeholder(self.end_entry, "YYYY-MM-DD")
 
         search_controls = tk.Frame(self.root)
         search_controls.pack(pady=10)
@@ -1622,6 +1622,29 @@ class GUI:
         # Internal state for cancellation
         self.cancel_requested = False
 
+    def _set_entry_placeholder(self, entry, text):
+        """Display a visual placeholder without treating it as input data."""
+        entry.insert(0, text)
+        entry.config(fg="grey")
+
+        def on_focus_in(_event):
+            if entry.get() == text:
+                entry.delete(0, tk.END)
+                entry.config(fg="black")
+
+        def on_focus_out(_event):
+            if not entry.get().strip():
+                entry.insert(0, text)
+                entry.config(fg="grey")
+
+        entry.bind("<FocusIn>", on_focus_in)
+        entry.bind("<FocusOut>", on_focus_out)
+
+    def _entry_value(self, entry, placeholder="YYYY-MM-DD"):
+        """Return the user's value, excluding placeholder text."""
+        value = entry.get().strip()
+        return "" if value == placeholder else value
+
     def open_lexical_settings(self):
         """Open researcher-configurable lexical filtering settings."""
         dialog = tk.Toplevel(self.root)
@@ -1695,8 +1718,8 @@ class GUI:
         started_at = time.perf_counter()
         sub = self.subreddit_entry.get().strip()
         kws = [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()]
-        start = self.start_entry.get().strip()
-        end = self.end_entry.get().strip()
+        start = self._entry_value(self.start_entry)
+        end = self._entry_value(self.end_entry)
         if not sub:
             messagebox.showerror("Error", "Please enter a subreddit.")
             return
@@ -1982,8 +2005,8 @@ class GUI:
             meta = {
                 "subreddit": self.subreddit_entry.get().strip(),
                 "keywords": [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()],
-                "start_date": self.start_entry.get().strip(),
-                "end_date": self.end_entry.get().strip(),
+                "start_date": self._entry_value(self.start_entry),
+                "end_date": self._entry_value(self.end_entry),
                 "lexical_use_english": self.lexical_use_english,
                 "lexical_use_malay": self.lexical_use_malay,
                 "lexical_custom_stopwords": list(self.lexical_custom_stopwords),
@@ -2020,8 +2043,8 @@ class GUI:
         meta = {
             "subreddit": self.subreddit_entry.get().strip(),
             "keywords": [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()],
-            "start_date": self.start_entry.get().strip(),
-            "end_date": self.end_entry.get().strip(),
+            "start_date": self._entry_value(self.start_entry),
+            "end_date": self._entry_value(self.end_entry),
             "lexical_use_english": self.lexical_use_english,
             "lexical_use_malay": self.lexical_use_malay,
             "lexical_custom_stopwords": list(self.lexical_custom_stopwords),
