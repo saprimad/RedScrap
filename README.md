@@ -92,6 +92,16 @@ Existing installations that still contain a legacy `client_secret` field in `red
 
 For environments where an operating system credential store is unavailable, credentials may be supplied through the `REDSCRAP_REDDIT_CLIENT_ID`, `REDSCRAP_REDDIT_CLIENT_SECRET`, and `REDSCRAP_REDDIT_USER_AGENT` environment variables. If no secure store or environment secret is available, RedScrap prompts for the secret for the current session rather than persisting it in plaintext.
 
+## Software evaluation
+
+RedScrap includes runtime instrumentation based on Python's `time.perf_counter()` for three user-facing stages: subreddit/keyword searching, Early Report generation and Excel export. The measurements are intended as observed end-to-end runtimes under the stated test conditions rather than hardware-independent performance guarantees.
+
+Functional evaluation was performed using `r/malaysia` with the keyword `langkawi` across three retrieval windows (3 months, 1 year and 2 years). All tested workflows completed successfully. Repeated runs showed consistent report-generation and export times for comparable workloads.
+
+A reproducible first-search latency effect was also observed after a fresh application launch: the first search was substantially slower than subsequent searches, including when tested with another keyword. Because the search stage depends on Reddit/PRAW and network conditions, this behaviour is documented as a fresh-launch first-request/cold-start effect rather than attributed solely to local RedScrap processing.
+
+Full test conditions, raw timings and interpretation are documented in [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md).
+
 ## System requirements
 
 - Python 3.10 or later; Python 3.11 is recommended.
