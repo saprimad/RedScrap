@@ -4,6 +4,10 @@ All notable changes to RedScrap are documented in this file.
 
 ## Unreleased
 
+- Replaced plaintext persistence of the Reddit `client_secret` with operating-system credential storage through Python `keyring` when available.
+- Added automatic migration of legacy `reddit_config.json` files so the client secret is removed from plaintext storage after migration.
+- Added environment-variable fallback support for Reddit credentials and session prompting when secure storage is unavailable.
+
 - Added a **Lexical Settings** dialog that lets researchers enable or disable built-in English and Malay stop-word lists and add study-specific stop words without editing the source code.
 - Custom lexical settings affect word-frequency analysis only; raw exported Reddit text remains unchanged.
 - Clarified that RedScrap provides configurable lexical preprocessing rather than automatic language identification, stemming, lemmatisation or full multilingual NLP.
