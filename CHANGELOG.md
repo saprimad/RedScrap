@@ -4,6 +4,8 @@ All notable changes to RedScrap are documented in this file.
 
 ## Unreleased
 
+- Strengthened the generated PDF sentiment warning to state that the Sentiment140-trained model has not been externally validated for Reddit discourse, Malay-language content or the present dataset.
+- Reworded sentiment narrative output to remain descriptive rather than inferential (for example, reporting relative classification proportions instead of stating that overall sentiment "leans" positive or negative).
 - Added a GUI warning when Reddit returns the configured 200-submission search cap before date filtering.
 - Added search diagnostics to the GUI summary, including the number of submissions examined and an explicit limit-reached indicator.
 - Documented that reaching the cap may exclude older posts from the selected date range and does not indicate exhaustive historical retrieval.
