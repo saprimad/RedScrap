@@ -4,20 +4,44 @@ All notable changes to RedScrap are documented in this file.
 
 ## Unreleased
 
+### Security and credentials
+
 - Replaced plaintext persistence of the Reddit `client_secret` with operating-system credential storage through Python `keyring` when available.
 - Added automatic migration of legacy `reddit_config.json` files so the client secret is removed from plaintext storage after migration.
 - Added environment-variable fallback support for Reddit credentials and session prompting when secure storage is unavailable.
 
+### Retrieval transparency
+
+- Added a GUI warning when Reddit returns the configured 200-submission search cap before the requested start-date boundary is reached.
+- Added search diagnostics to the GUI summary, including the number of submissions examined and an explicit limit-reached indicator.
+- Documented that reaching the cap may exclude older posts from the selected date range and does not indicate exhaustive historical retrieval.
+
+### Lexical preprocessing and sentiment reporting
+
 - Added a **Lexical Settings** dialog that lets researchers enable or disable built-in English and Malay stop-word lists and add study-specific stop words without editing the source code.
 - Custom lexical settings affect word-frequency analysis only; raw exported Reddit text remains unchanged.
 - Clarified that RedScrap provides configurable lexical preprocessing rather than automatic language identification, stemming, lemmatisation or full multilingual NLP.
-- Strengthened the generated PDF sentiment warning to state that the Sentiment140-trained model has not been externally validated for Reddit discourse, Malay-language content or the present dataset.
+- Strengthened the generated PDF sentiment warning: the distributed classifier is documented as Sentiment140-based, has not been externally validated for Reddit discourse, Malay-language content or the present dataset, and should be interpreted as exploratory.
 - Reworded sentiment narrative output to remain descriptive rather than inferential (for example, reporting relative classification proportions instead of stating that overall sentiment "leans" positive or negative).
-- Added a GUI warning when Reddit returns the configured 200-submission search cap before date filtering.
-- Added search diagnostics to the GUI summary, including the number of submissions examined and an explicit limit-reached indicator.
-- Documented that reaching the cap may exclude older posts from the selected date range and does not indicate exhaustive historical retrieval.
-- Excel exports now put the Reddit discussion permalink in `Thread URL` and
-  preserve the original post destination in a new `Source URL` column.
+
+### Evaluation and reproducibility
+
+- Added `time.perf_counter()` instrumentation for end-to-end search/retrieval, Early Report generation and Excel export.
+- Added documented functional/runtime evaluation across 3-month, 1-year and 2-year retrieval windows.
+- Documented the fresh-launch first-search latency as an observed end-to-end cold-start effect without attributing it exclusively to RedScrap, Reddit/PRAW or network activity.
+- Added `SOFTWARE_EVALUATION.md` with test configuration, hardware/software environment, raw timings, success outcomes and interpretation.
+- Updated reviewer-response audit notes to align with the final evaluation evidence and software behaviour.
+
+### Documentation and workflow positioning
+
+- Updated the README comparison of selected Reddit research approaches to distinguish access model, workflow and data handling without ranking the tools.
+- Clarified RedScrap as a local desktop workflow designed to reduce routine technical barriers rather than as a novel Reddit API or analytical algorithm.
+- Clarified that researcher-controlled local storage may reduce third-party data transfer compared with server-hosted workflows, while not implying that local storage alone guarantees privacy or security.
+- Updated Reddit API configuration documentation to match keyring-based secret storage.
+
+### Export
+
+- Excel exports now put the Reddit discussion permalink in `Thread URL` and preserve the original post destination in a new `Source URL` column.
 
 ## [21.9.0] - 2026-09-21
 
