@@ -48,13 +48,13 @@ Observed scenarios:
 ## Reviewer A2 — Sentiment-analysis warning and interpretation
 
 ### Reviewer concern
-The sentiment model was trained using Sentiment140 (Twitter data), whereas RedScrap is applied to Reddit discussions. Users should be clearly warned that sentiment classifications are exploratory and have not been validated for Reddit data.
+The distributed sentiment model is documented as Sentiment140-based (Twitter data), whereas RedScrap is applied to Reddit discussions. Users should be clearly warned that sentiment classifications are exploratory and have not been validated for Reddit data.
 
 ### Software changes
 - Replaced the previous softer note with an explicit **Caution** statement in the generated PDF report.
 - The report now states that the sentiment model:
   - uses a TF-IDF vectorizer and logistic-regression classifier;
-  - was trained on the Sentiment140 Twitter dataset;
+  - is documented as Sentiment140-based, while the training-data provenance cannot be independently verified from the distributed model artefacts;
   - has not been externally validated for Reddit discourse;
   - has not been externally validated for Malay-language content or the present dataset; and
   - should be treated as exploratory rather than as a validated measure of opinion or stance.
@@ -120,7 +120,7 @@ These terms were entered into **Lexical Settings → Additional stop words** and
 ### Verification
 - `python -m py_compile RedScrap.py` completed without error.
 - Lexical Settings dialog opened successfully.
-- English and Malay defaults were enabled as intended.
+- English stop words were enabled by default and Malay stop words were disabled by default, matching the final evaluation configuration.
 - Custom stop-word entry accepted comma-separated terms.
 - Regenerated PDF reflected the custom lexical filtering.
 
@@ -167,7 +167,7 @@ The revised approach materially reduces the risk of accidental disclosure throug
 The reviewer requested clearer articulation of the software's novelty and contribution, together with a comparison against existing Reddit data-collection approaches.
 
 ### Contribution framing
-RedScrap is not positioned as a new Reddit API or as a novel analytical algorithm. Its principal contribution is the reduction of technical barriers to Reddit-based research for users with limited programming or computational expertise, particularly researchers in the social and health sciences.
+RedScrap is not positioned as a new Reddit API or as a novel analytical algorithm. Its principal contribution is a researcher-oriented workflow designed to reduce routine technical barriers to Reddit-based research, particularly for users in the social and health sciences with limited programming or computational expertise.
 
 The software integrates commonly required stages of Reddit-based research within a single graphical desktop workflow, including:
 - subreddit and keyword searching;
@@ -192,20 +192,20 @@ It provides an initial overview of:
 
 The Early Report is not intended to replace formal qualitative, quantitative or mixed-method analytical procedures. Its purpose is to support familiarisation with the dataset, identification of potentially relevant patterns and assessment of whether the retrieved material is suitable for subsequent analysis.
 
-### Planned manuscript revision
-The manuscript will:
-- make the low-barrier social- and health-science use case explicit;
-- clarify the role of the Early Report as an orientation rather than final analytical tool; and
-- add a comparison table contrasting RedScrap with existing Reddit data-collection approaches in terms of technical requirements, graphical accessibility, retrieval workflow, export options and built-in exploratory analysis.
+### Manuscript revision
+The revised manuscript:
+- makes the intended social- and health-science use case explicit;
+- clarifies the Early Report as an orientation rather than a final analytical tool; and
+- adds a comparison table contrasting selected Reddit research approaches in terms of access model, workflow and data handling.
 
 ### Comparison table finalised
-The comparison was refined against four representative approaches:
-- **PRAW** — flexible Python API wrapper that requires Python knowledge for routine use.
-- **praw-cli** — command-line Reddit extraction with strong filtering, export and reproducibility features.
-- **Reddit Data Tool** — lightweight browser-based thread export using public Reddit JSON rather than OAuth/API client access.
-- **Communalytic** — no-code computational social-science platform with Reddit collectors.
+The comparison was refined against three representative external approaches plus RedScrap:
+- **PRAW** — an open-source Python API wrapper requiring Python knowledge for routine use.
+- **Reddit Data Tool** — a lightweight browser-based tool for thread export and inspection.
+- **Communalytic** — a no-code, server-hosted computational social-science platform with free and paid access tiers.
+- **RedScrap** — a local desktop workflow combining API-based retrieval, structured Excel export and exploratory dataset orientation.
 
-The comparison avoids claiming that RedScrap is the only low-code/no-code Reddit research tool. Instead, RedScrap is positioned as a focused local desktop workflow combining API-based retrieval, structured Excel export, researcher-configurable lexical preprocessing and an Early Report intended for rapid dataset orientation before more intensive analysis.
+The comparison avoids ranking the tools or claiming that RedScrap supersedes them. RedScrap is positioned as a focused local desktop workflow combining API-based retrieval, structured Excel export, researcher-configurable lexical preprocessing and an Early Report intended for rapid dataset orientation before more intensive analysis. Researcher-controlled local storage may reduce third-party data transfer relative to server-hosted workflows, although local storage alone does not guarantee privacy or security.
 
 **Status: PASS — contribution clarified and comparison table added to README; manuscript table to use the same evidence-based positioning.**
 
@@ -241,20 +241,28 @@ Retrieval windows:
 
 ### Observed results
 
-| Window | Run | Matching threads | Comments exported | Submissions examined | Search time (s) | Report time (s) | Export time (s) | Outcome |
+| Window | Test | Matching threads | Comments exported | Submissions examined | Search time (s) | Report time (s) | Export time (s) | Outcome |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| 3 months | 1 | 23 | 212 | 200 | 4.55 | 9.57 | 0.25 | PASS |
-| 3 months | 2 | 23 | 213 | 100 | 4.02 | 9.44 | 0.26 | PASS |
-| 1 year | 1 | 111 | 1,988 | 200 | 4.51 | 66.72 | 0.50 | PASS |
-| 1 year | 2 | 111 | 1,989 | 200 | 4.86 | 55.10 | 0.52 | PASS |
-| 2 years | 1 | 200 | 3,136 | 200 | 84.41 | 92.37 | 0.67 | PASS |
-| 2 years | 2 | 200 | 3,137 | 200 | 10.23 | 93.47 | 0.65 | PASS |
-| 2 years | 3 | 200 | 3,138 | 200 | 7.27 | 96.54 | 0.65 | PASS |
+| 2 years | 0 | 200 | 3,136 | 200 | 84.41 | 92.37 | 0.67 | PASS |
+| 2 years | 1 | 200 | 3,137 | 200 | 10.23 | 93.47 | 0.65 | PASS |
+| 2 years | 2 | 200 | 3,138 | 200 | 7.27 | 96.54 | 0.65 | PASS |
+| 1 year | 3 | 111 | 1,988 | 200 | 4.51 | 66.72 | 0.50 | PASS |
+| 1 year | 4 | 111 | 1,989 | 200 | 4.86 | 55.10 | 0.52 | PASS |
+| 3 months | 5 | 23 | 212 | 200 | 4.55 | 9.57 | 0.25 | PASS |
+| 3 months | 6 | 23 | 213 | 100 | 4.02 | 9.44 | 0.26 | PASS |
+
+### Evaluation environment
+- Lenovo ThinkPad X1 Carbon
+- Windows 11
+- 12th Gen Intel Core i7-1260P
+- 16 GB memory
+- NVMe storage
+- Network context during evaluation: approximately 55.53 Mbps download, 87.34 Mbps upload and 9 ms idle latency
 
 ### Interpretation
 All tested workflows completed successfully. Report-generation and Excel-export times were highly consistent for comparable workloads, while the search stage showed greater variability because it depends on external Reddit/PRAW retrieval and network conditions.
 
-The first 2-year search after a fresh application launch took 84.41 seconds, while subsequent identical-window searches took 10.23 and 7.27 seconds. The researcher independently reproduced the same qualitative pattern with another keyword: the first search after fully closing and relaunching RedScrap was slower than the second search. This supports documenting the behaviour as a reproducible fresh-launch first-request/cold-start effect. However, because external API and network latency are part of the end-to-end search measurement, the delay is not attributed solely to local RedScrap processing.
+The first 2-year search after a fresh application launch took 84.41 seconds, while subsequent identical-window searches took 10.23 and 7.27 seconds. A similar qualitative first-search pattern was observed with another keyword, but the formal table reports only the recorded `langkawi` runs. The first run is therefore documented as an observed fresh-launch first-request/cold-start effect. However, because external API and network latency are part of the end-to-end search measurement, the delay is not attributed solely to local RedScrap processing.
 
 Minor differences in exported comment counts across repeated runs reflect the dynamic nature of live Reddit data.
 
