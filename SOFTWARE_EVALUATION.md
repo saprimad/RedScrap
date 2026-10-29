@@ -43,15 +43,17 @@ Date windows:
 
 ## Results
 
-| Window | Run | Matching threads | Comments exported | Submissions examined | Search time (s) | Early Report time (s) | Excel export time (s) | Outcome |
+| Window | Test | Matching threads | Comments exported | Submissions examined | Search time (s) | Early Report time (s) | Excel export time (s) | Outcome |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| 3 months | 1 | 23 | 212 | 200 | 4.55 | 9.57 | 0.25 | PASS |
-| 3 months | 2 | 23 | 213 | 100 | 4.02 | 9.44 | 0.26 | PASS |
-| 1 year | 1 | 111 | 1,988 | 200 | 4.51 | 66.72 | 0.50 | PASS |
-| 1 year | 2 | 111 | 1,989 | 200 | 4.86 | 55.10 | 0.52 | PASS |
-| 2 years | 1 | 200 | 3,136 | 200 | 84.41 | 92.37 | 0.67 | PASS |
-| 2 years | 2 | 200 | 3,137 | 200 | 10.23 | 93.47 | 0.65 | PASS |
-| 2 years | 3 | 200 | 3,138 | 200 | 7.27 | 96.54 | 0.65 | PASS |
+| 2 years | 0 | 200 | 3,136 | 200 | 84.41 | 92.37 | 0.67 | PASS |
+| 2 years | 1 | 200 | 3,137 | 200 | 10.23 | 93.47 | 0.65 | PASS |
+| 2 years | 2 | 200 | 3,138 | 200 | 7.27 | 96.54 | 0.65 | PASS |
+| 1 year | 3 | 111 | 1,988 | 200 | 4.51 | 66.72 | 0.50 | PASS |
+| 1 year | 4 | 111 | 1,989 | 200 | 4.86 | 55.10 | 0.52 | PASS |
+| 3 months | 5 | 23 | 212 | 200 | 4.55 | 9.57 | 0.25 | PASS |
+| 3 months | 6 | 23 | 213 | 100 | 4.02 | 9.44 | 0.26 | PASS |
+
+*Note: Test 0 represents the cold-start run after fully closing and reopening RedScrap. Tests 1–6 represent subsequent runs under the same general testing environment.*
 
 ## Key findings
 
