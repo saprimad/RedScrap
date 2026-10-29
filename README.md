@@ -153,7 +153,7 @@ files are not changed by this update.
 
 ## Sentiment-analysis limitation
 
-The supplied sentiment component performs binary positive/negative classification using a fitted TF-IDF vectorizer and logistic-regression model trained on Sentiment140. It was not designed as a substitute for manual qualitative coding and has not been established as a validated measure for Reddit discourse, Malay-language content or the user's specific research domain. Treat its output as exploratory and report the model, training data and limitations transparently.
+The supplied sentiment component performs binary positive/negative classification using a fitted TF-IDF vectorizer and logistic-regression model trained on the Sentiment140 Twitter dataset. The model has not been externally validated for Reddit discourse, Malay-language content or the user's specific dataset. Sentiment outputs should therefore be treated as exploratory only and should not be interpreted as validated measures of opinion or stance. RedScrap now places this caution directly in the generated PDF report and keeps the accompanying narrative descriptive rather than inferential.
 
 ## Ethical and responsible use
 
