@@ -96,11 +96,11 @@ For environments where an operating system credential store is unavailable, cred
 
 RedScrap includes runtime instrumentation based on Python's `time.perf_counter()` for three user-facing stages: subreddit/keyword searching, Early Report generation and Excel export. The measurements are intended as observed end-to-end runtimes under the stated test conditions rather than hardware-independent performance guarantees.
 
-Functional evaluation was performed using `r/malaysia` with the keyword `langkawi` across three retrieval windows (3 months, 1 year and 2 years). All tested workflows completed successfully. Repeated runs showed consistent report-generation and export times for comparable workloads.
+Functional evaluation was performed using `r/malaysia` with the keyword `langkawi` across three retrieval windows (3 months, 1 year and 2 years). All documented workflows completed successfully. Repeated runs showed stable report-generation and Excel-export times for comparable workloads, while search latency varied more because it includes external Reddit/PRAW and network activity.
 
-A reproducible first-search latency effect was also observed after a fresh application launch: the first search was substantially slower than subsequent searches, including when tested with another keyword. Because the search stage depends on Reddit/PRAW and network conditions, this behaviour is documented as a fresh-launch first-request/cold-start effect rather than attributed solely to local RedScrap processing.
+A reproducible fresh-launch first-search effect was observed, with the first search after relaunch taking longer than subsequent searches. This is documented as an end-to-end first-request/cold-start effect rather than being attributed solely to local RedScrap processing.
 
-Full test conditions, raw timings and interpretation are documented in [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md).
+See [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md) for the full test configuration, raw timings, key findings and interpretation.
 
 ## System requirements
 
