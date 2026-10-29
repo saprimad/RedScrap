@@ -7,3 +7,4 @@ reportlab
 joblib
 scikit-learn==1.7.2
 openpyxl
+keyring
