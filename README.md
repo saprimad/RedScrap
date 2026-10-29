@@ -153,19 +153,20 @@ python RedScrap.py
 
 RedScrap does not provide shared Reddit API credentials. Each user must request access to the Reddit Data API, obtain Reddit's approval, and use their own registered application's `client_id` and `client_secret`. Researchers should follow the [Reddit for Researchers Program](https://support.reddithelp.com/hc/en-us/articles/49381918834964-Reddit-for-Researchers-Program) guidance and select **I'm a researcher** when submitting the API-access request. Users must also comply with Reddit's [Data API guidance](https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki), Developer Terms and Data API Terms.
 
-After approval and credential registration, launch RedScrap. On first launch, the software requests the user's Reddit client ID and client secret. These credentials are saved locally in `reddit_config.json` and reused in later sessions.
+After approval and credential registration, launch RedScrap. On first launch, the software requests the user's Reddit client ID and client secret. When an operating-system credential store is available, the `client_secret` is stored through Python `keyring` rather than being written to plaintext configuration. The local `reddit_config.json` file retains only non-secret settings such as the client ID and user agent.
 
-The configuration file has this structure:
+The configuration file therefore has this structure:
 
 ```json
 {
   "client_id": "YOUR_CLIENT_ID",
-  "client_secret": "YOUR_CLIENT_SECRET",
   "user_agent": "RedScrap v21.9.0"
 }
 ```
 
-Keep the `client_secret` and `reddit_config.json` private. Never share another person's credentials or upload the configuration file to GitHub, Zenodo or any shared repository. Each RedScrap user is responsible for maintaining their own approval and complying with Reddit's applicable conditions.
+Existing installations that still contain a legacy plaintext `client_secret` are migrated on the next successful launch: RedScrap attempts to move the secret to the operating-system credential store and rewrites the configuration file without the secret. Where a secure credential store is unavailable, credentials may instead be supplied through the `REDSCRAP_REDDIT_CLIENT_ID`, `REDSCRAP_REDDIT_CLIENT_SECRET`, and `REDSCRAP_REDDIT_USER_AGENT` environment variables. If no secure store or environment secret is available, RedScrap prompts for the secret for the current session without persisting it in plaintext.
+
+Never share another person's credentials or upload local credential/configuration files to GitHub, Zenodo or any shared repository. Each RedScrap user is responsible for maintaining their own approval and complying with Reddit's applicable conditions.
 
 ## Basic use
 
