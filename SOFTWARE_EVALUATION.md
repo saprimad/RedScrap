@@ -8,9 +8,11 @@ The purpose is to show that the main workflow completes successfully across data
 
 ## Evaluation environment
 
-The tests were conducted on Windows using the desktop GUI and a single RedScrap instance. All runs used the live Reddit service through PRAW and were performed sequentially.
+The tests were conducted using the RedScrap desktop GUI on a Lenovo ThinkPad X1 Carbon running Windows 11 with a 12th Gen Intel Core i7-1260P processor, 16 GB memory and NVMe storage. A single RedScrap instance was used, and all runs were performed sequentially against the live Reddit service through PRAW.
 
-Because Reddit retrieval depends on an external API and network conditions, search timings should be interpreted as end-to-end observed latency rather than pure local CPU-processing time.
+The internet connection measured approximately 55.53 Mbps download and 87.34 Mbps upload with 9 ms idle latency during the evaluation period. These network measurements are provided only as contextual information and should not be interpreted as a controlled networking benchmark.
+
+Because Reddit retrieval depends on an external API and network conditions, search timings should be interpreted as end-to-end observed latency rather than pure local CPU-processing time. Report-generation and Excel-export timings reflect local processing more directly, although they remain specific to the stated hardware and software environment.
 
 ## Runtime instrumentation
 
