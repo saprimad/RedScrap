@@ -415,24 +415,30 @@ class Analyzer:
             comment_counts[dt.year] += 1
         return thread_counts, comment_counts
 
-    def word_frequency(self, n=20, stopwords=None):
-        """Return the top ``n`` most common terms (unigrams and bigrams) in the comments.
+    def word_frequency(
+        self,
+        n=20,
+        stopwords=None,
+        use_english=True,
+        use_malay=True,
+        custom_stopwords=None,
+    ):
+        """Return the top ``n`` most common terms (unigrams and bigrams).
 
-        This implementation expands on the original by performing additional
-        cleaning, leveraging a broader set of English and Malay stopwords and
-        optionally generating simple bigrams.  Contraction artifacts such as
-        ``"s"`` or ``"t"`` that result from apostrophe stripping are explicitly
-        removed.  The method is suitable for arbitrary datasets and does not
-        enforce any domain-specific filtering.
+        Default English and Malay stop-word lists can be enabled or disabled
+        independently. Researchers may also provide additional stop words from
+        the GUI. This is configurable lexical preprocessing, not automatic
+        language identification or full multilingual NLP.
 
         :param n: Number of top terms to return.
-        :param stopwords: Optional set of stopwords to exclude.  If none is
-            provided, a combined English/Malay set with additional contraction
-            tokens will be used.
+        :param stopwords: Optional complete stop-word set. If supplied, the
+            language toggles and custom list are ignored.
+        :param use_english: Include the built-in English stop-word list.
+        :param use_malay: Include the built-in Malay stop-word list.
+        :param custom_stopwords: Optional iterable of researcher-supplied terms.
         :returns: List of (term, count) tuples sorted by descending frequency.
         """
         import re
-        # Define a comprehensive set of default stopwords if none provided.
         if stopwords is None:
             english_stop = {
                 "the","and","a","to","of","in","is","it","that","for","on","with","as",
@@ -442,19 +448,27 @@ class Analyzer:
                 "did","should","could","would","may","might","also","u","im","one","two","three",
                 "can","cant","cannot"
             }
-            # Common Malay stopwords (not exhaustive but captures frequent function words)
             malay_stop = {
                 "yang","dan","dengan","untuk","pada","adalah","ini","itu","saya","kami",
                 "kamu","dia","mereka","kita","dari","ke","tidak","akan","juga","oleh",
                 "agar","dapat","atau","kerana","serta","ia","sebagai","dalam","lebih",
                 "per","ber","ter","ma","se","kau","aku","tak","lah","mcm","yg"
             }
-            # Additional tokens resulting from contractions or common noise
             contraction_tokens = {
                 "s","t","m","re","ve","ll","don","d","amp","ampamp","http","https",
                 "deleted","removed","edit"
             }
-            stopwords = english_stop | malay_stop | contraction_tokens
+            stopwords = set(contraction_tokens)
+            if use_english:
+                stopwords |= english_stop
+            if use_malay:
+                stopwords |= malay_stop
+            if custom_stopwords:
+                stopwords |= {
+                    str(word).strip().lower()
+                    for word in custom_stopwords
+                    if str(word).strip()
+                }
         # Concatenate all comment bodies into a single string
         text = " ".join(self.comments["body"].dropna().astype(str))
         # Remove URLs completely
@@ -1057,7 +1071,12 @@ class Exporter:
         # Page 6: Section 6 – Word Frequency and Visualization
         # -------------------------------------------------
         story.append(Paragraph("Section 6. Word Frequency and Visualization", styles["Heading1"]))
-        freq_list = analyzer.word_frequency(n=20)
+        freq_list = analyzer.word_frequency(
+            n=20,
+            use_english=meta.get("lexical_use_english", True),
+            use_malay=meta.get("lexical_use_malay", True),
+            custom_stopwords=meta.get("lexical_custom_stopwords", []),
+        )
         if freq_list:
             # Build table of words and counts
             word_table_data = [["Word", "Count"]] + [[w, c] for w, c in freq_list]
@@ -1391,6 +1410,9 @@ class GUI:
         self.search_retrieved_count = 0
         self.search_limit = 200
         self.search_limit_reached = False
+        self.lexical_use_english = True
+        self.lexical_use_malay = True
+        self.lexical_custom_stopwords = []
         self.root = tk.Tk()
         # Set a simplified window title
         self.root.title(f"RedScrap v{__version__}")
@@ -1412,7 +1434,21 @@ class GUI:
         self.end_entry = tk.Entry(self.root, width=20)
         self.end_entry.insert(0, "2024-12-31")
         self.end_entry.pack(padx=5)
-        tk.Button(self.root, text="Search Threads", command=self.search_threads, bg="#2196F3", fg="white").pack(pady=10)
+
+        search_controls = tk.Frame(self.root)
+        search_controls.pack(pady=10)
+        tk.Button(
+            search_controls,
+            text="Lexical Settings",
+            command=self.open_lexical_settings
+        ).pack(side=tk.LEFT, padx=5)
+        tk.Button(
+            search_controls,
+            text="Search Threads",
+            command=self.search_threads,
+            bg="#2196F3",
+            fg="white"
+        ).pack(side=tk.LEFT, padx=5)
 
         # Listbox to display threads
         tk.Label(self.root, text="Matching Threads:").pack(anchor='w')
@@ -1498,6 +1534,74 @@ class GUI:
 
         # Internal state for cancellation
         self.cancel_requested = False
+
+    def open_lexical_settings(self):
+        """Open researcher-configurable lexical filtering settings."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Lexical Settings")
+        dialog.resizable(False, False)
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        use_english_var = tk.BooleanVar(value=self.lexical_use_english)
+        use_malay_var = tk.BooleanVar(value=self.lexical_use_malay)
+
+        tk.Label(
+            dialog,
+            text="Choose built-in stop-word lists and add study-specific terms.",
+            justify="left"
+        ).pack(anchor="w", padx=12, pady=(12, 6))
+
+        tk.Checkbutton(
+            dialog,
+            text="Use built-in English stop words",
+            variable=use_english_var
+        ).pack(anchor="w", padx=12)
+
+        tk.Checkbutton(
+            dialog,
+            text="Use built-in Malay stop words",
+            variable=use_malay_var
+        ).pack(anchor="w", padx=12)
+
+        tk.Label(
+            dialog,
+            text="Additional stop words (comma-separated or one per line):"
+        ).pack(anchor="w", padx=12, pady=(10, 4))
+
+        custom_text = tk.Text(dialog, width=58, height=8, wrap="word")
+        custom_text.pack(padx=12, pady=(0, 8))
+        custom_text.insert("1.0", "\n".join(self.lexical_custom_stopwords))
+
+        tk.Label(
+            dialog,
+            text=(
+                "These settings affect lexical word-frequency output only. "
+                "They do not change the raw exported Reddit text."
+            ),
+            fg="gray",
+            wraplength=430,
+            justify="left"
+        ).pack(anchor="w", padx=12, pady=(0, 8))
+
+        def save_settings():
+            raw = custom_text.get("1.0", tk.END)
+            terms = [
+                term.strip().lower()
+                for line in raw.splitlines()
+                for term in line.split(",")
+                if term.strip()
+            ]
+            # Preserve entry order while removing duplicates.
+            self.lexical_custom_stopwords = list(dict.fromkeys(terms))
+            self.lexical_use_english = bool(use_english_var.get())
+            self.lexical_use_malay = bool(use_malay_var.get())
+            dialog.destroy()
+
+        button_row = tk.Frame(dialog)
+        button_row.pack(pady=(0, 12))
+        tk.Button(button_row, text="Save", command=save_settings).pack(side=tk.LEFT, padx=5)
+        tk.Button(button_row, text="Cancel", command=dialog.destroy).pack(side=tk.LEFT, padx=5)
 
     def search_threads(self):
         """Fetch threads based on user input and populate the listbox."""
@@ -1773,6 +1877,9 @@ class GUI:
                 "keywords": [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()],
                 "start_date": self.start_entry.get().strip(),
                 "end_date": self.end_entry.get().strip(),
+                "lexical_use_english": self.lexical_use_english,
+                "lexical_use_malay": self.lexical_use_malay,
+                "lexical_custom_stopwords": list(self.lexical_custom_stopwords),
             }
             if not self.cancel_requested:
                 Exporter.generate_pdf_enhanced(self.posts, analyzer, path, meta)
@@ -1803,6 +1910,9 @@ class GUI:
             "keywords": [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()],
             "start_date": self.start_entry.get().strip(),
             "end_date": self.end_entry.get().strip(),
+            "lexical_use_english": self.lexical_use_english,
+            "lexical_use_malay": self.lexical_use_malay,
+            "lexical_custom_stopwords": list(self.lexical_custom_stopwords),
         }
         path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
         if path:
