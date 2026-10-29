@@ -951,21 +951,25 @@ class Exporter:
                     f"{pos_count} ({pos_pct:.1f}%) were classified as Positive and "
                     f"{neg_count} ({neg_pct:.1f}%) were classified as Negative. "
                 )
-                # Determine leaning
+                # Keep the narrative descriptive because the sentiment model
+                # has not been externally validated for Reddit discourse.
                 if abs(pos_pct - neg_pct) < 5:
-                    explanation += "This indicates a relatively balanced sentiment, showing both support and opposition are present."
+                    explanation += "The proportions classified as positive and negative were similar."
                 elif pos_pct > neg_pct:
-                    explanation += "Overall sentiment leans positive."
+                    explanation += "A larger proportion of comments was classified as positive than negative."
                 else:
-                    explanation += "Overall sentiment leans negative."
+                    explanation += "A larger proportion of comments was classified as negative than positive."
                 story.append(Spacer(1, 12))
                 story.append(Paragraph(explanation, styles["Normal"]))
 
-            # 4. Note about Sentiment140 limitations
+            # 4. Explicit caution about Sentiment140 domain limitations
             note_text = (
-                "<i>Note: Sentiment classification was performed using the Sentiment140 dataset "
-                "(binary: positive/negative). Although validated in its original Twitter context, "
-                "its accuracy for Reddit data may be limited.</i>"
+                "<b>Caution:</b> Sentiment classification is based on a TF-IDF and "
+                "logistic-regression model trained on the Sentiment140 Twitter dataset. "
+                "The model has not been externally validated for Reddit discourse, "
+                "Malay-language content, or the present dataset. Sentiment outputs should "
+                "therefore be treated as exploratory only and should not be interpreted as "
+                "validated measures of opinion or stance."
             )
             story.append(Spacer(1, 6))
             story.append(Paragraph(note_text, note_style))
