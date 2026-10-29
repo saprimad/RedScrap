@@ -208,3 +208,59 @@ The comparison was refined against four representative approaches:
 The comparison avoids claiming that RedScrap is the only low-code/no-code Reddit research tool. Instead, RedScrap is positioned as a focused local desktop workflow combining API-based retrieval, structured Excel export, researcher-configurable lexical preprocessing and an Early Report intended for rapid dataset orientation before more intensive analysis.
 
 **Status: PASS — contribution clarified and comparison table added to README; manuscript table to use the same evidence-based positioning.**
+
+
+---
+
+## Reviewer B3 — Software evaluation, runtime and process success
+
+### Reviewer concern
+The reviewer requested a more substantive software evaluation, including test cases, runtime/performance information and evidence that the software workflow completes successfully.
+
+### Evaluation approach
+RedScrap was instrumented using Python's `time.perf_counter()` to record end-to-end runtime for:
+- search/retrieval;
+- Early Report generation; and
+- Excel export.
+
+The evaluation focused on functional success and observed runtime rather than RAM benchmarking, as no memory-related problems were observed during routine testing and the reviewer concern could be addressed more directly through reproducible workflow-level measurements.
+
+### Test scenario
+Common settings:
+- Subreddit: `r/malaysia`
+- Keyword: `langkawi`
+- English lexical stop words: enabled
+- Malay lexical stop words: disabled
+- Custom stop words: none
+- Workflow: Search Threads -> Early Report -> Scrape All Threads
+
+Retrieval windows:
+- 3 months: 2026-07-29 to 2026-10-29
+- 1 year: 2025-10-29 to 2026-10-29
+- 2 years: 2024-10-29 to 2026-10-29
+
+### Observed results
+
+| Window | Run | Matching threads | Comments exported | Submissions examined | Search time (s) | Report time (s) | Export time (s) | Outcome |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| 3 months | 1 | 23 | 212 | 200 | 4.55 | 9.57 | 0.25 | PASS |
+| 3 months | 2 | 23 | 213 | 100 | 4.02 | 9.44 | 0.26 | PASS |
+| 1 year | 1 | 111 | 1,988 | 200 | 4.51 | 66.72 | 0.50 | PASS |
+| 1 year | 2 | 111 | 1,989 | 200 | 4.86 | 55.10 | 0.52 | PASS |
+| 2 years | 1 | 200 | 3,136 | 200 | 84.41 | 92.37 | 0.67 | PASS |
+| 2 years | 2 | 200 | 3,137 | 200 | 10.23 | 93.47 | 0.65 | PASS |
+| 2 years | 3 | 200 | 3,138 | 200 | 7.27 | 96.54 | 0.65 | PASS |
+
+### Interpretation
+All tested workflows completed successfully. Report-generation and Excel-export times were highly consistent for comparable workloads, while the search stage showed greater variability because it depends on external Reddit/PRAW retrieval and network conditions.
+
+The first 2-year search after a fresh application launch took 84.41 seconds, while subsequent identical-window searches took 10.23 and 7.27 seconds. The researcher independently reproduced the same qualitative pattern with another keyword: the first search after fully closing and relaunching RedScrap was slower than the second search. This supports documenting the behaviour as a reproducible fresh-launch first-request/cold-start effect. However, because external API and network latency are part of the end-to-end search measurement, the delay is not attributed solely to local RedScrap processing.
+
+Minor differences in exported comment counts across repeated runs reflect the dynamic nature of live Reddit data.
+
+### Evidence retained
+- Runtime instrumentation is implemented directly in `RedScrap.py` using `time.perf_counter()`.
+- Full raw timings and test conditions are stored in `SOFTWARE_EVALUATION.md`.
+- Terminal logs/screenshots may be retained separately as supplementary audit evidence if requested.
+
+**Status: PASS**
