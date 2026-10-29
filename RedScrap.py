@@ -287,15 +287,27 @@ class Scraper:
         except Exception:
             end_ts = int(time.time()) + 1
         retrieved_count = 0
+        oldest_retrieved_ts = None
         for submission in self.reddit.subreddit(self.subreddit).search(query, sort="new", limit=limit):
             retrieved_count += 1
             created = submission.created_utc
+            oldest_retrieved_ts = created if oldest_retrieved_ts is None else min(oldest_retrieved_ts, created)
             if start_ts <= created < end_ts:
                 results.append(submission)
 
         self.search_retrieved_count = retrieved_count
         self.search_limit = limit
-        self.search_limit_reached = bool(limit is not None and retrieved_count >= limit)
+        reached_cap = bool(limit is not None and retrieved_count >= limit)
+        # Warn only when the retrieval cap was reached before the search
+        # descended to the user's requested start date. If the oldest
+        # retrieved submission is already older than start_date, the
+        # requested window has at least been crossed and no completeness
+        # warning is shown.
+        self.search_limit_reached = bool(
+            reached_cap
+            and oldest_retrieved_ts is not None
+            and oldest_retrieved_ts >= start_ts
+        )
         self.posts = results
         return results
 
@@ -1520,9 +1532,9 @@ class GUI:
         if self.search_limit_reached:
             messagebox.showwarning(
                 "Search limit reached",
-                f"Reddit returned the maximum {self.search_limit} submissions examined by RedScrap. "
-                "Because date filtering is applied after retrieval, older posts within the selected "
-                "date range may not be included. Consider narrowing the keywords or date range."
+                f"RedScrap examined the maximum {self.search_limit} submissions returned by Reddit "
+                "before reaching the start of the selected date range. Older posts within the requested "
+                "period may therefore be missing. Consider narrowing the keywords or date range."
             )
 
         # Populate listbox
