@@ -157,3 +157,45 @@ Verification performed:
 The revised approach materially reduces the risk of accidental disclosure through copied project folders, source repositories or local plaintext configuration files. Secure storage remains dependent on the security of the host operating-system account.
 
 **Status: PASS**
+
+
+---
+
+## Reviewer B1 — Novelty and contribution
+
+### Reviewer concern
+The reviewer requested clearer articulation of the software's novelty and contribution, together with a comparison against existing Reddit data-collection approaches.
+
+### Contribution framing
+RedScrap is not positioned as a new Reddit API or as a novel analytical algorithm. Its principal contribution is the reduction of technical barriers to Reddit-based research for users with limited programming or computational expertise, particularly researchers in the social and health sciences.
+
+The software integrates commonly required stages of Reddit-based research within a single graphical desktop workflow, including:
+- subreddit and keyword searching;
+- date filtering;
+- thread and comment retrieval;
+- structured Excel export;
+- configurable lexical preprocessing;
+- exploratory reporting; and
+- optional sentiment classification.
+
+This positioning distinguishes RedScrap from programmer-oriented workflows that require users to write API scripts, operate command-line tools or assemble separate data-processing pipelines.
+
+### Role of the Early Report
+The Early Report is intended as an exploratory orientation tool that helps researchers rapidly understand the broad characteristics of a retrieved dataset before committing to more intensive analysis.
+
+It provides an initial overview of:
+- thread volume;
+- engagement patterns;
+- temporal distribution;
+- lexical patterns; and
+- optional exploratory sentiment output.
+
+The Early Report is not intended to replace formal qualitative, quantitative or mixed-method analytical procedures. Its purpose is to support familiarisation with the dataset, identification of potentially relevant patterns and assessment of whether the retrieved material is suitable for subsequent analysis.
+
+### Planned manuscript revision
+The manuscript will:
+- make the low-barrier social- and health-science use case explicit;
+- clarify the role of the Early Report as an orientation rather than final analytical tool; and
+- add a comparison table contrasting RedScrap with existing Reddit data-collection approaches in terms of technical requirements, graphical accessibility, retrieval workflow, export options and built-in exploratory analysis.
+
+**Status: Documentation updated; comparison table pending finalisation.**
