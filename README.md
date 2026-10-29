@@ -58,6 +58,14 @@ Do not rename the model files. RedScrap looks specifically for `sentiment_vector
 
 The supplied models were created with scikit-learn 1.7.2. This version is pinned in `requirements.txt` to avoid model-persistence compatibility warnings. Only load model files obtained from the official RedScrap release because Python pickle-based files can execute code during loading.
 
+## Reddit API credential storage
+
+RedScrap no longer stores the Reddit client secret in plaintext inside `reddit_config.json`. The client ID and user agent may remain in that local configuration file, while the client secret is stored using the operating system credential store through Python `keyring` when available.
+
+Existing installations that still contain a legacy `client_secret` field in `reddit_config.json` are migrated on the next successful launch: RedScrap attempts to save the secret to the operating system credential store and rewrites the local configuration without the secret.
+
+For environments where an operating system credential store is unavailable, credentials may be supplied through the `REDSCRAP_REDDIT_CLIENT_ID`, `REDSCRAP_REDDIT_CLIENT_SECRET`, and `REDSCRAP_REDDIT_USER_AGENT` environment variables. If no secure store or environment secret is available, RedScrap prompts for the secret for the current session rather than persisting it in plaintext.
+
 ## System requirements
 
 - Python 3.10 or later; Python 3.11 is recommended.
