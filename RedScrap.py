@@ -969,7 +969,9 @@ class Exporter:
                 "The model has not been externally validated for Reddit discourse, "
                 "Malay-language content, or the present dataset. Sentiment outputs should "
                 "therefore be treated as exploratory only and should not be interpreted as "
-                "validated measures of opinion or stance."
+                "validated measures of opinion or stance. Human review is recommended "
+                "before drawing substantive conclusions, particularly for sarcasm, slang, "
+                "code-switching, and other context-dependent expressions."
             )
             story.append(Spacer(1, 6))
             story.append(Paragraph(note_text, note_style))
