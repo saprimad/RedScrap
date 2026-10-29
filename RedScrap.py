@@ -507,7 +507,7 @@ class Analyzer:
         n=20,
         stopwords=None,
         use_english=True,
-        use_malay=True,
+        use_malay=False,
         custom_stopwords=None,
     ):
         """Return the top ``n`` most common terms (unigrams and bigrams).
@@ -1078,7 +1078,8 @@ class Exporter:
             # 4. Explicit caution about Sentiment140 domain limitations
             note_text = (
                 "<b>Caution:</b> Sentiment classification is based on a TF-IDF and "
-                "logistic-regression model trained on the Sentiment140 Twitter dataset. "
+                "logistic-regression model documented as Sentiment140-based; its training-data " +
+                "provenance cannot be independently verified from the distributed model artefacts. "
                 "The model has not been externally validated for Reddit discourse, "
                 "Malay-language content, or the present dataset. Sentiment outputs should "
                 "therefore be treated as exploratory only and should not be interpreted as "
@@ -1161,7 +1162,7 @@ class Exporter:
         freq_list = analyzer.word_frequency(
             n=20,
             use_english=meta.get("lexical_use_english", True),
-            use_malay=meta.get("lexical_use_malay", True),
+            use_malay=meta.get("lexical_use_malay", False),
             custom_stopwords=meta.get("lexical_custom_stopwords", []),
         )
         if freq_list:
