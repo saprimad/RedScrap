@@ -9,7 +9,7 @@ RedScrap is a Python desktop application for the reproducible collection and pre
 
 ## Intended users and research contribution
 
-RedScrap is designed to lower the technical barrier to Reddit-based research, particularly for researchers in the social and health sciences who may have limited programming or computational expertise. The graphical desktop interface integrates subreddit and keyword searching, date filtering, thread and comment retrieval, structured Excel export, configurable lexical preprocessing, exploratory reporting and optional sentiment classification without requiring users to build their own API scripts or command-line workflows.
+RedScrap is designed to reduce routine technical barriers to Reddit-based research, particularly for researchers in the social and health sciences who may have limited programming or computational expertise. The graphical desktop interface integrates subreddit and keyword searching, date filtering, thread and comment retrieval, structured Excel export, configurable lexical preprocessing, exploratory reporting and optional sentiment classification without requiring users to build their own API scripts or command-line workflows.
 
 The **Early Report** is intended as an exploratory orientation tool. It provides researchers with a rapid overview of the retrieved dataset before they commit to more intensive qualitative, quantitative or mixed-method analysis. The report summarises broad characteristics such as thread volume, engagement, temporal distribution, lexical patterns and optional exploratory sentiment output. It is not intended to replace formal analytical procedures.
 
@@ -211,7 +211,7 @@ These settings affect lexical word-frequency output only and do not alter the ra
 
 ## Sentiment-analysis limitation
 
-The supplied sentiment component performs binary positive/negative classification using a fitted TF-IDF vectorizer and logistic-regression model trained on the Sentiment140 Twitter dataset. The model has not been externally validated for Reddit discourse, Malay-language content or the user's specific dataset. Sentiment outputs should therefore be treated as exploratory only and should not be interpreted as validated measures of opinion or stance. RedScrap now places this caution directly in the generated PDF report and keeps the accompanying narrative descriptive rather than inferential.
+The supplied sentiment component performs binary positive/negative classification using a fitted TF-IDF vectorizer and logistic-regression model documented as Sentiment140-based; the training-data provenance cannot be independently verified from the distributed model artefacts. The model has not been externally validated for Reddit discourse, Malay-language content or the user's specific dataset. Sentiment outputs should therefore be treated as exploratory only and should not be interpreted as validated measures of opinion or stance. RedScrap now places this caution directly in the generated PDF report and keeps the accompanying narrative descriptive rather than inferential.
 
 ## Ethical and responsible use
 
