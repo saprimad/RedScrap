@@ -144,6 +144,8 @@ files are not changed by this update.
 
 - The graphical search retrieves a maximum of 200 Reddit search results, ordered newest-first.
 - Date filtering is applied only to those returned candidates. A search is therefore reproducible within its stated parameters and retrieval bounds, but it is not an exhaustive historical archive of Reddit.
+- When the 200-result retrieval cap is reached, RedScrap now displays a **Search limit reached** warning and reports the number of submissions examined in the GUI summary. The warning informs users that older posts within the selected date range may not have been retrieved and suggests narrowing the keywords or date range.
+- Reaching the cap should therefore be treated as a completeness warning rather than evidence that all matching historical posts were retrieved.
 - Availability depends on Reddit's API, search behaviour, access rules, rate limits and the continued availability of posts and comments.
 - Loading all nested comments can take considerable time for large discussions.
 - Deleted, removed or inaccessible content may be missing or represented incompletely.
