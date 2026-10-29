@@ -187,6 +187,18 @@ files are not changed by this update.
 
 ## Search scope and limitations
 
+### Search retrieval limit and performance considerations
+
+RedScrap implements a developer-defined limit of **200 Reddit submissions per search** to balance API usage, processing efficiency, and user experience.
+
+This precautionary limit aims to minimise excessive API requests, reduce the risk of temporary access restrictions, and maintain reasonable processing times for data collection and preliminary report generation.
+
+The limit is intentionally not configurable through the graphical user interface. Advanced users may modify it directly in the open-source Python code, subject to Reddit's API policies and technical constraints.
+
+**Important:** This is an application-level precaution, not an official Reddit API rate limit. It does not guarantee complete retrieval of all relevant submissions or prevent API restrictions. Processing time may vary depending on the number of comments, network conditions, and system performance.
+
+### Search completeness and other limitations
+
 - The graphical search retrieves a maximum of 200 Reddit search results, ordered newest-first.
 - Date filtering is applied only to those returned candidates. A search is therefore reproducible within its stated parameters and retrieval bounds, but it is not an exhaustive historical archive of Reddit.
 - When the 200-result retrieval cap is reached, RedScrap now displays a **Search limit reached** warning and reports the number of submissions examined in the GUI summary. The warning informs users that older posts within the selected date range may not have been retrieved and suggests narrowing the keywords or date range.
