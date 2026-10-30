@@ -1736,9 +1736,15 @@ class GUI:
                 except ValueError:
                     messagebox.showerror("Error", f"Invalid date format: {date_str}. Use YYYY-MM-DD.")
                     return
+        search_limit = 200
+        self.log_message(
+            f"Search started | subreddit={sub} | keywords={kws!r} "
+            f"| start={start or 'not set'} | end={end or 'not set'} "
+            f"| limit={search_limit}"
+        )
         try:
             scraper = Scraper(self.reddit, sub, kws, start, end)
-            self.posts = scraper.fetch_threads(limit=200)
+            self.posts = scraper.fetch_threads(limit=search_limit)
             self.search_retrieved_count = scraper.search_retrieved_count
             self.search_limit = scraper.search_limit
             self.search_limit_reached = scraper.search_limit_reached
