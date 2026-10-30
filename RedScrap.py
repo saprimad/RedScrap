@@ -1641,6 +1641,31 @@ class GUI:
         entry.bind("<FocusIn>", on_focus_in)
         entry.bind("<FocusOut>", on_focus_out)
 
+    def _default_export_filename(self, kind, extension):
+        """Suggest a Windows-safe filename describing the retrieved search."""
+        import re
+
+        def safe_part(value, fallback, max_length):
+            value = re.sub(r"[^\w.-]+", "_", str(value).strip())
+            return value[:max_length].strip("._") or fallback
+
+        context = getattr(self, "_last_search_filename_context", None)
+        if context is None:
+            context = (
+                self.subreddit_entry.get().strip(),
+                self.keyword_entry.get().strip(),
+                self._entry_value(self.start_entry),
+                self._entry_value(self.end_entry),
+            )
+        subreddit, keywords, start, end = context
+        stamp = datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss")
+        return (
+            f"{kind}_{safe_part(subreddit, 'subreddit', 24)}_"
+            f"{safe_part(keywords, 'all_keywords', 50)}_"
+            f"{safe_part(start, 'no_start', 10)}_to_"
+            f"{safe_part(end, 'no_end', 10)}_generated_{stamp}{extension}"
+        )
+
     def _entry_value(self, entry, placeholder="YYYY-MM-DD"):
         """Return the user's value, excluding placeholder text."""
         value = entry.get().strip()
@@ -1748,6 +1773,7 @@ class GUI:
             self.search_retrieved_count = scraper.search_retrieved_count
             self.search_limit = scraper.search_limit
             self.search_limit_reached = scraper.search_limit_reached
+            self._last_search_filename_context = (sub, ", ".join(kws), start, end)
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while searching: {e}")
             return
@@ -1792,7 +1818,7 @@ class GUI:
             messagebox.showerror("Error", "Please select a thread to scrape.")
             return
         # Ask for a save path before spawning the thread (must occur in the main thread)
-        path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
+        path = filedialog.asksaveasfilename(initialfile=self._default_export_filename(f"Comments_T{sel[0] + 1}", ".xlsx"), defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
         if not path:
             return
         # Start the scraping thread
@@ -1889,7 +1915,7 @@ class GUI:
             messagebox.showerror("Error", "No threads available. Please search first.")
             return
         # Ask for save path in main thread
-        path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
+        path = filedialog.asksaveasfilename(initialfile=self._default_export_filename("Comments", ".xlsx"), defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
         if not path:
             return
         # Start the scraping thread
@@ -1989,7 +2015,7 @@ class GUI:
             messagebox.showerror("Error", "No threads to analyze. Please search first.")
             return
         # Ask for save path
-        path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+        path = filedialog.asksaveasfilename(initialfile=self._default_export_filename("EarlyReport", ".pdf"), defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
         if not path:
             return
         # Start the thread to generate report
@@ -2056,7 +2082,7 @@ class GUI:
             "lexical_use_malay": self.lexical_use_malay,
             "lexical_custom_stopwords": list(self.lexical_custom_stopwords),
         }
-        path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+        path = filedialog.asksaveasfilename(initialfile=self._default_export_filename("EarlyReport", ".pdf"), defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
         if path:
             try:
                 started_at = time.perf_counter()
@@ -2164,7 +2190,7 @@ class GUI:
                 "Upvotes": c.score
             })
         # Choose a save location
-        path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
+        path = filedialog.asksaveasfilename(initialfile=self._default_export_filename(f"Comments_T{sel[0] + 1}", ".xlsx"), defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
         if path:
             try:
                 Exporter.comments_to_excel(comments, path)
@@ -2177,7 +2203,7 @@ class GUI:
         if not self.posts:
             messagebox.showerror("Error", "No threads available. Please search first.")
             return
-        path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
+        path = filedialog.asksaveasfilename(initialfile=self._default_export_filename("Comments", ".xlsx"), defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])
         if path:
             try:
                 Exporter.all_threads_to_excel(self.posts, path)
