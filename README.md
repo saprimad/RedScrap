@@ -94,6 +94,8 @@ Functional evaluation was performed using `r/malaysia` with the keyword `langkaw
 
 A reproducible fresh-launch first-search effect was observed, with the first search after relaunch taking longer than subsequent searches. This is documented as an end-to-end first-request/cold-start effect rather than being attributed solely to local RedScrap processing.
 
+An additional experimental evaluation on 31 October 2026 removed the application-level 200-submission cap: two successive runs each returned 242 matching threads and exported 3,434 comment records, with identical exported text and record order. The 200-submission default remains an operational safeguard for general use; it is not a software capacity limit or a Reddit blocking threshold. See [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md#retrieval-without-the-200-thread-limit) for the comparison and limitations, and [the experimental run record](RETRIEVAL_WITHOUT_200_THREAD_LIMIT.md) for settings and audit evidence.
+
 See [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md) for the full test configuration, raw timings, key findings and interpretation.
 
 ## System requirements
@@ -188,13 +190,13 @@ RedScrap implements a developer-defined limit of **200 Reddit submissions per se
 
 This precautionary limit aims to minimise excessive API requests, reduce the risk of temporary access restrictions, and maintain reasonable processing times for data collection and preliminary report generation.
 
-The limit is intentionally not configurable through the graphical user interface. Advanced users may modify it directly in the open-source Python code, subject to Reddit's API policies and technical constraints.
+The general-use version retains the 200-submission limit. On this experimental branch only (`test/no-thread-cap`), ticking **Remove 200-thread limit** passes `limit=None` to PRAW; leaving it unticked preserves the default cap. This experimental option is not merged into `main`.
 
 **Important:** This is an application-level precaution, not an official Reddit API rate limit. It does not guarantee complete retrieval of all relevant submissions or prevent API restrictions. Processing time may vary depending on the number of comments, network conditions, and system performance.
 
 ### Search completeness and other limitations
 
-- The graphical search retrieves a maximum of 200 Reddit search results, ordered newest-first.
+- By default, the graphical search examines a maximum of 200 Reddit search results, ordered newest-first. This experimental branch optionally removes that application-level cap; API search availability and access restrictions still apply.
 - Date filtering is applied only to those returned candidates. A search is therefore reproducible within its stated parameters and retrieval bounds, but it is not an exhaustive historical archive of Reddit.
 - When the 200-result retrieval cap is reached, RedScrap now displays a **Search limit reached** warning and reports the number of submissions examined in the GUI summary. The warning informs users that older posts within the selected date range may not have been retrieved and suggests narrowing the keywords or date range.
 - Reaching the cap should therefore be treated as a completeness warning rather than evidence that all matching historical posts were retrieved.
