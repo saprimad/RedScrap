@@ -3,7 +3,9 @@
 A desktop research tool for retrieving Reddit threads and comments through
 PRAW, exporting structured data, and producing an exploratory PDF report.
 
-Optional sentiment analysis uses ``sentiment_vectorizer.pkl`` and
+Optional researcher-trained relevance/sentiment models can be selected in the
+Sentiment Workspace. The supplied binary sentiment analysis uses
+``sentiment_vectorizer.pkl`` and
 ``sentiment_model.pkl``. Place both files in the same directory as this script.
 If either file is unavailable, sentiment analysis is skipped while the other
 collection and reporting functions remain available.
@@ -406,13 +408,15 @@ class Scraper:
 class Analyzer:
     """Perform analyses on scraped data: descriptive stats, frequency, temporal patterns, etc."""
 
-    def __init__(self, posts):
+    def __init__(self, posts, custom_bundle=None):
+        self.custom_bundle = custom_bundle
+        self.custom_prediction_summary = None
         self.posts = posts or []
         # Gather comments from posts into a DataFrame
         self.comments = self._collect_comments()
         
         # --- NEW: Perform Sentiment Analysis on initialization ---
-        self.sentiment_model_loaded = self.load_sentiment_model()
+        self.sentiment_model_loaded = bool(custom_bundle) or self.load_sentiment_model()
         if self.sentiment_model_loaded:
             self.perform_sentiment_analysis()
         else:
@@ -650,6 +654,15 @@ class Analyzer:
         """Analyze the sentiment of all comments and add a 'sentiment' column."""
         if not self.sentiment_model_loaded:
             self.comments["sentiment"] = None
+            return
+
+        if self.custom_bundle is not None:
+            from custom_sentiment import predict_comments
+            predicted, self.custom_prediction_summary = predict_comments(
+                self.custom_bundle, self.comments.rename(columns={"body": "Comment"}), "Comment"
+            )
+            self.comments["relevance"] = predicted["Predicted relevance"].to_numpy()
+            self.comments["sentiment"] = predicted["Predicted sentiment"].replace("", None).to_numpy()
             return
 
         comment_bodies = self.comments["body"].dropna().astype(str)
@@ -983,6 +996,28 @@ class Exporter:
         # -------------------------------------------------
         story.append(Paragraph('Section 4. Sentiment Analysis Summary', styles['Heading1']))
         sentiment_data = analyzer.sentiment_summary()
+        custom_summary = getattr(analyzer, "custom_prediction_summary", None)
+        if custom_summary is not None:
+            metadata = analyzer.custom_bundle["metadata"]
+            story.append(make_paragraph("Researcher-trained two-stage model. Topic: " + metadata["topic"], styles["Normal"]))
+            story.append(make_paragraph(
+                "Input rows: {total_rows}; Related: {related}; Not related: {not_related}; "
+                "unavailable/blank: {unavailable_or_blank}. Sentiment percentages use Related rows only "
+                "(denominator = {sentiment_denominator}).".format(**custom_summary), styles["Normal"]
+            ))
+            story.append(make_paragraph(
+                "Model created: " + metadata["created_at_utc"] + "; labelled-data fingerprint: " +
+                metadata["labelled_data_sha256"] + "; scikit-learn: " + metadata["sklearn_version"], styles["Normal"]
+            ))
+            story.append(make_paragraph(
+                f"Held-out split: {metadata['split_method']}; training rows: {metadata['training_rows']}; "
+                f"test rows: {metadata['test_rows']}. Saved pipelines were fitted on training rows only.", styles["Normal"]
+            ))
+            for stage, result in metadata["evaluation"].items():
+                story.append(make_paragraph(
+                    f"{stage}: test n = {result['n']}; accuracy = {result['accuracy']:.3f}; macro F1 = {result['macro_f1']:.3f}.", styles["Normal"]
+                ))
+            story.append(make_paragraph(metadata["limitations"], note_style))
 
         if sentiment_data:
             counts = sentiment_data['counts']
@@ -1009,7 +1044,7 @@ class Exporter:
             # Caption for Table 4
             story.append(Spacer(1, 6))
             story.append(Paragraph(
-                "Table 4. Sentiment distribution (positive vs negative).",
+                "Table 4. Sentiment distribution (predicted Related comments only)." if custom_summary is not None else "Table 4. Sentiment distribution (positive vs negative).",
                 caption_style
             ))
             # Provide a bit more space before the pie chart
@@ -1035,7 +1070,7 @@ class Exporter:
             sentiment_colors = {
                 'Positive': colors.green,
                 'Negative': colors.red,
-                # Add 'Neutral' if you upgrade to a ternary model
+                'Neutral': colors.grey,
             }
             for i, sentiment in enumerate(sorted_sentiments):
                 if i < len(pie.data):
@@ -1052,28 +1087,14 @@ class Exporter:
                 caption_style
             ))
 
-            # 3. Narrative explanation of sentiment results
-            total_comments = sum(counts.get(s, 0) for s in counts)
-            pos_count = counts.get('Positive', 0)
-            neg_count = counts.get('Negative', 0)
-            if total_comments > 0:
-                pos_pct = percentages.get('Positive', 0)
-                neg_pct = percentages.get('Negative', 0)
-                explanation = (
-                    f"Out of {total_comments} comments analyzed, "
-                    f"{pos_count} ({pos_pct:.1f}%) were classified as Positive and "
-                    f"{neg_count} ({neg_pct:.1f}%) were classified as Negative. "
-                )
-                # Keep the narrative descriptive because the sentiment model
-                # has not been externally validated for Reddit discourse.
-                if abs(pos_pct - neg_pct) < 5:
-                    explanation += "The proportions classified as positive and negative were similar."
-                elif pos_pct > neg_pct:
-                    explanation += "A larger proportion of comments was classified as positive than negative."
-                else:
-                    explanation += "A larger proportion of comments was classified as negative than positive."
-                story.append(Spacer(1, 12))
-                story.append(Paragraph(explanation, styles["Normal"]))
+            # Include every model label; a custom neutral class is not silently omitted.
+            total_comments = sum(counts.values())
+            explanation = f"Out of {total_comments} classified comments, " + ", ".join(
+                f"{counts[label]} ({percentages[label]:.1f}%) were classified as {label}"
+                for label in sorted_sentiments
+            ) + "."
+            story.append(Spacer(1, 12))
+            story.append(make_paragraph(explanation, styles["Normal"]))
 
             # 4. Explicit caution about Sentiment140 domain limitations
             note_text = (
@@ -1087,11 +1108,23 @@ class Exporter:
                 "before drawing substantive conclusions, particularly for sarcasm, slang, "
                 "code-switching, and other context-dependent expressions."
             )
+            if custom_summary is not None:
+                note_text = (
+                    "Researcher-trained model with internal held-out evaluation only. "
+                    "Performance depends on labels, topic and language; external validation is still needed. "
+                    "Not related is excluded from the sentiment denominator. "
+                    "Polarity is not a measure of acceptance, agreement or stance."
+                )
             story.append(Spacer(1, 6))
             story.append(Paragraph(note_text, note_style))
             
         else:
-            story.append(Paragraph("Sentiment analysis skipped. Model files (sentiment_vectorizer.pkl, sentiment_model.pkl) not found, or no comments collected.", styles["Normal"]))
+            skipped = (
+                "No predicted Related comments were available for sentiment classification."
+                if custom_summary is not None else
+                "Sentiment analysis skipped. Model files (sentiment_vectorizer.pkl, sentiment_model.pkl) not found, or no comments collected."
+            )
+            story.append(Paragraph(skipped, styles["Normal"]))
             
         story.append(PageBreak())
         # -------------------------------------------------
@@ -1501,6 +1534,8 @@ class GUI:
         self.lexical_use_english = True
         self.lexical_use_malay = False
         self.lexical_custom_stopwords = []
+        self.custom_sentiment_bundle = None
+        self.sentiment_workspaces = []
         self.root = tk.Tk()
         # Set a simplified window title
         self.root.title(f"RedScrap v{__version__}")
@@ -1536,6 +1571,10 @@ class GUI:
             command=self.search_threads,
             bg="#2196F3",
             fg="white"
+        ).pack(side=tk.LEFT, padx=5)
+
+        tk.Button(
+            search_controls, text="Sentiment Workspace", command=self.open_sentiment_workspace
         ).pack(side=tk.LEFT, padx=5)
 
         # Listbox to display threads
@@ -1640,6 +1679,16 @@ class GUI:
 
         entry.bind("<FocusIn>", on_focus_in)
         entry.bind("<FocusOut>", on_focus_out)
+
+    def open_sentiment_workspace(self):
+        from custom_sentiment_gui import open_workspace
+        workspace = open_workspace(self.root, on_select=self.select_custom_sentiment)
+        self.sentiment_workspaces.append(workspace)
+
+    def select_custom_sentiment(self, bundle):
+        self.custom_sentiment_bundle = bundle
+        topic = bundle["metadata"]["topic"] if bundle is not None else "supplied binary model"
+        self.log_message("Sentiment selection for subsequent reports: " + topic)
 
     def _default_export_filename(self, kind, extension):
         """Suggest a Windows-safe filename describing the retrieved search."""
@@ -2019,10 +2068,10 @@ class GUI:
         if not path:
             return
         # Start the thread to generate report
-        thread = threading.Thread(target=self.generate_report_task, args=(path,), daemon=True)
+        thread = threading.Thread(target=self.generate_report_task, args=(path, self.custom_sentiment_bundle), daemon=True)
         thread.start()
 
-    def generate_report_task(self, path: str):
+    def generate_report_task(self, path: str, custom_bundle=None):
         """Generate the PDF report in a background thread."""
         started_at = time.perf_counter()
         self.cancel_requested = False
@@ -2034,7 +2083,7 @@ class GUI:
         self.log_message("Starting report generation...")
         try:
             # Analyzer and meta should be prepared in the thread, but heavy computation may take time
-            analyzer = Analyzer(self.posts)
+            analyzer = Analyzer(self.posts, custom_bundle=custom_bundle)
             meta = {
                 "subreddit": self.subreddit_entry.get().strip(),
                 "keywords": [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()],
@@ -2071,7 +2120,7 @@ class GUI:
             messagebox.showerror("Error", "No threads to analyze. Please search first.")
             return
         # Analyzer now automatically attempts sentiment analysis on initialization
-        analyzer = Analyzer(self.posts) 
+        analyzer = Analyzer(self.posts, custom_bundle=self.custom_sentiment_bundle) 
         # Collect metadata
         meta = {
             "subreddit": self.subreddit_entry.get().strip(),
@@ -2231,3 +2280,4 @@ if __name__ == "__main__":
             " scraping and analysis classes programmatically in a Python environment, or "
             "install the Tk libraries (e.g. python3-tk) to enable the GUI."
         )
+

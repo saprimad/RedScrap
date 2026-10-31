@@ -187,3 +187,8 @@ peak_day.png
 peak_hour.png
 *.xlsx
 output/
+
+# Researcher-trained models and local prediction summaries
+*.rsmodel
+*.rsmodel.evaluation.json
+*.xlsx.summary.json

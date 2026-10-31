@@ -1,0 +1,28 @@
+name: Custom sentiment tests
+on:
+  push:
+    branches: [feature/custom-sentiment-models]
+  pull_request:
+    paths:
+      - 'RedScrap.py'
+      - 'custom_sentiment*.py'
+      - 'tests/**'
+      - 'requirements.txt'
+      - '.github/workflows/custom-sentiment.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt pymupdf
+      - run: python -m py_compile RedScrap.py custom_sentiment.py custom_sentiment_gui.py
+      - run: python -m unittest discover -s tests -v

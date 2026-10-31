@@ -1,5 +1,7 @@
 # RedScrap
 
+> **Experimental branch: custom sentiment models.** New **Sentiment Workspace** supports researcher-labelled relevance (Related / Not related), three-class sentiment, held-out evaluation and reusable local models. See [CUSTOM_SENTIMENT.md](CUSTOM_SENTIMENT.md) for GUI/CLI instructions and limitations. This is not part of the archived v21.9.0 release.
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22866437.svg)](https://doi.org/10.5281/zenodo.22866437)
 
 **Current release:** Version 21.9.0  
@@ -247,3 +249,4 @@ For software-related enquiries, contact `saprimad@moh.gov.my`.
 ## Licence
 
 RedScrap is distributed under the MIT License. See `LICENSE` for the full terms.
+
