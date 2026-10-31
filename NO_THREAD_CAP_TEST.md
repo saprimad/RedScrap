@@ -38,3 +38,45 @@ python -m py_compile RedScrap.py
 ```
 
 Tests execute the real Scraper and GUI search methods with fake Reddit responses. They cover 350 returned submissions, the existing cap, duplicate IDs, date boundaries, cancellation, empty results, API interruption, cap validation and GUI forwarding/control restoration. They require no credentials or live Reddit requests. Full desktop visual QA and the live T7 collection must be performed on the researcher's configured machine.
+
+## Recorded live run — 31 October 2026
+
+The researcher ran the experimental branch on their configured Windows machine and supplied the console output below as the source for these results. The exported JSON, XLSX and PDF have not been independently inspected for this entry.
+
+| Setting or result | Recorded value |
+| --- | --- |
+| Tested code commit | `b3f186728d93cdde996c28ca25692e6177e156a3` (branch implementation provided for this run; local checkout SHA not included in the supplied console log) |
+| Subreddit | `malaysia` |
+| Keyword / query | `langkawi` |
+| Requested date range | 29 October 2024–29 October 2026, UTC, inclusive end date |
+| Search order | `new` |
+| User-defined thread cap | None (`limit=None`) |
+| Search start (UTC) | 2026-10-31T02:06:37.932999+00:00 |
+| Search end (UTC) | 2026-10-31T02:06:44.331952+00:00 |
+| Search elapsed time (reported timer) | 6.407 seconds |
+| Submissions examined | 242 |
+| Matching threads | 242 |
+| Duplicate submissions detected | 0 |
+| Search termination status | `available_results_exhausted` |
+| Early Report generation time | 123.42 seconds |
+| Subsequent all-thread comment export time | 0.81 seconds |
+| Comments exported | 3,434 |
+| Execution order | Search → Early Report → Scrape All Threads |
+| Sentiment analysis | Console reported successful loading of the trained TF-IDF vectorizer and classifier |
+| Retry count | Not instrumented; handled by PRAW |
+
+### Interpretation and timing limits
+
+This live run demonstrates retrieval beyond the researcher-configured 200-submission cap. The 200 setting is a conservative operational safeguard for general use, intended to bound workload and API usage; it is not an inherent RedScrap capacity limit or a Reddit blocking threshold. It does not itself guarantee avoidance of rate limiting.
+
+The search iterator exhausted the results available for this query through the API. This is not evidence of complete historical Reddit coverage. The 3,434 figure is the console-reported exported comment count, not an independently verified cleaned or analysable comment count.
+
+The report ran before the comment export. Comment objects may therefore already have been cached by PRAW. The 0.81-second export must not be presented as a cold-start end-to-end comment retrieval benchmark. No isolated retrieval-time or throughput claim is established by this run.
+
+For a comparison against the earlier capped T1, distinguish the cap setting from changes in Reddit search availability over time. A contemporaneous capped control and inspection of exported thread IDs would be needed to attribute all count differences to the cap alone.
+
+### Branch policy
+
+Keep this experiment on `test/no-thread-cap`. **Do not merge it into `main`.** Retain the existing 200-submission safeguard for general use. The uncapped option remains an experimental mode for this evaluation.
+
+Retain the run's Search Log JSON, Excel export and Early Report PDF with the research records, using a distinct `T7_NoCap` label. Those files are not included in this documentation-only update.
