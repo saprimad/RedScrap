@@ -360,8 +360,16 @@ class Scraper:
         self.search_limit = None
         self.search_limit_reached = False
 
-    def fetch_threads(self, limit=200):
-        """Search for threads matching the keywords between start_date and end_date."""
+    def fetch_threads(self, limit=200, should_cancel=None):
+        """Search available API results; None removes only the user-defined cap."""
+        if limit is not None and (isinstance(limit, bool) or not isinstance(limit, int) or limit < 1):
+            raise ValueError("limit must be a positive integer or None")
+        started_at = time.perf_counter()
+        self.search_status = "running"
+        self.search_started_at = datetime.now(timezone.utc).isoformat()
+        self.search_limit = limit
+        self.search_retrieved_count = 0
+        self.posts = []
         query = " OR ".join(self.keywords) if self.keywords else "*"
         results = []
         # Use UTC boundaries, including the entire selected end date.
@@ -375,27 +383,59 @@ class Scraper:
             end_ts = int(time.time()) + 1
         retrieved_count = 0
         oldest_retrieved_ts = None
-        for submission in self.reddit.subreddit(self.subreddit).search(query, sort="new", limit=limit):
-            retrieved_count += 1
-            created = submission.created_utc
-            oldest_retrieved_ts = created if oldest_retrieved_ts is None else min(oldest_retrieved_ts, created)
-            if start_ts <= created < end_ts:
-                results.append(submission)
-
-        self.search_retrieved_count = retrieved_count
-        self.search_limit = limit
-        reached_cap = bool(limit is not None and retrieved_count >= limit)
-        # Warn only when the retrieval cap was reached before the search
-        # descended to the user's requested start date. If the oldest
-        # retrieved submission is already older than start_date, the
-        # requested window has at least been crossed and no completeness
-        # warning is shown.
-        self.search_limit_reached = bool(
-            reached_cap
-            and oldest_retrieved_ts is not None
-            and oldest_retrieved_ts >= start_ts
-        )
-        self.posts = results
+        seen_ids = set()
+        self.search_duplicate_count = 0
+        self.search_limit_reached = False
+        try:
+            iterator = iter(self.reddit.subreddit(self.subreddit).search(query, sort="new", limit=limit))
+            while True:
+                if should_cancel and should_cancel():
+                    self.search_status = "cancelled"
+                    break
+                try:
+                    submission = next(iterator)
+                except StopIteration:
+                    self.search_status = (
+                        "user_cap_reached" if limit is not None and retrieved_count >= limit
+                        else "available_results_exhausted"
+                    )
+                    break
+                if should_cancel and should_cancel():
+                    self.search_status = "cancelled"
+                    break
+                retrieved_count += 1
+                created = submission.created_utc
+                oldest_retrieved_ts = created if oldest_retrieved_ts is None else min(oldest_retrieved_ts, created)
+                if submission.id in seen_ids:
+                    self.search_duplicate_count += 1
+                    continue
+                seen_ids.add(submission.id)
+                if start_ts <= created < end_ts:
+                    results.append(submission)
+        except Exception:
+            self.search_status = "api_or_error_interruption"
+            raise
+        finally:
+            self.search_retrieved_count = retrieved_count
+            self.search_limit_reached = bool(
+                limit is not None and retrieved_count >= limit
+                and oldest_retrieved_ts is not None and oldest_retrieved_ts >= start_ts
+            )
+            self.posts = results
+            self.search_metadata = {
+                "subreddit": self.subreddit, "query": query,
+                "start_date": self.start_date, "end_date": self.end_date,
+                "user_thread_cap": limit, "sort": "new",
+                "started_at_utc": self.search_started_at,
+                "ended_at_utc": datetime.now(timezone.utc).isoformat(),
+                "elapsed_seconds": round(time.perf_counter() - started_at, 3),
+                "submissions_examined": retrieved_count,
+                "matching_threads": len(results),
+                "duplicate_submissions": self.search_duplicate_count,
+                "status": self.search_status,
+                "scope_note": "Available Reddit API search results; not a completeness guarantee.",
+                "retries": "Managed by PRAW; retry count not instrumented.",
+            }
         return results
 
 
@@ -1504,7 +1544,7 @@ class GUI:
         self.root = tk.Tk()
         # Set a simplified window title
         self.root.title(f"RedScrap v{__version__}")
-        self.root.geometry("800x600")
+        self.root.geometry("1000x650")
 
         # Input fields
         tk.Label(self.root, text="Subreddit:").pack(anchor='w')
@@ -1530,13 +1570,25 @@ class GUI:
             text="Lexical Settings",
             command=self.open_lexical_settings
         ).pack(side=tk.LEFT, padx=5)
-        tk.Button(
+        self.search_button = tk.Button(
             search_controls,
             text="Search Threads",
             command=self.search_threads,
             bg="#2196F3",
             fg="white"
-        ).pack(side=tk.LEFT, padx=5)
+        )
+        self.search_button.pack(side=tk.LEFT, padx=5)
+        self.no_thread_cap = tk.BooleanVar(value=False)
+        self.no_cap_checkbox = tk.Checkbutton(
+            search_controls, text="No user-defined limit", variable=self.no_thread_cap
+        )
+        self.no_cap_checkbox.pack(side=tk.LEFT, padx=5)
+        self.search_log_button = tk.Button(
+            search_controls, text="Save Search Log", command=self.save_search_log
+        )
+        self.search_log_button.pack(side=tk.LEFT, padx=5)
+        self.search_in_progress = False
+        self.search_metadata = None
 
         # Listbox to display threads
         tk.Label(self.root, text="Matching Threads:").pack(anchor='w')
@@ -1553,6 +1605,7 @@ class GUI:
         self.summary_label = tk.Label(
             self.root,
             text="",
+            wraplength=960,
             fg="blue",
             anchor='center',
             justify='center'
@@ -1741,7 +1794,8 @@ class GUI:
 
     def search_threads(self):
         """Fetch threads based on user input and populate the listbox."""
-        started_at = time.perf_counter()
+        if self.search_in_progress:
+            return
         sub = self.subreddit_entry.get().strip()
         kws = [k.strip() for k in self.keyword_entry.get().split(',') if k.strip()]
         start = self._entry_value(self.start_entry)
@@ -1761,44 +1815,86 @@ class GUI:
                 except ValueError:
                     messagebox.showerror("Error", f"Invalid date format: {date_str}. Use YYYY-MM-DD.")
                     return
-        search_limit = 200
+        search_limit = None if self.no_thread_cap.get() else 200
+        scraper = Scraper(self.reddit, sub, kws, start, end)
+        self.cancel_requested = False
+        self.search_in_progress = True
+        self.search_metadata = None
+        self.posts = []
+        self.listbox.delete(0, tk.END)
+        self.summary_label.config(text="Searching available API results…")
+        controls = [self.search_button, self.no_cap_checkbox, self.search_log_button,
+                    self.report_btn, self.scrape_selected_btn, self.scrape_all_btn,
+                    self.subreddit_entry, self.keyword_entry, self.start_entry, self.end_entry]
+        for control in controls:
+            control.config(state=tk.DISABLED)
+        if self.progress is not None:
+            self.progress.start()
         self.log_message(
             f"Search started | subreddit={sub} | keywords={kws!r} "
             f"| start={start or 'not set'} | end={end or 'not set'} "
-            f"| limit={search_limit}"
+            f"| user_thread_cap={search_limit}"
         )
-        try:
-            scraper = Scraper(self.reddit, sub, kws, start, end)
-            self.posts = scraper.fetch_threads(limit=search_limit)
+        outcome = {}
+        finished = threading.Event()
+
+        def worker():
+            try:
+                scraper.fetch_threads(limit=search_limit, should_cancel=lambda: self.cancel_requested)
+            except Exception as exc:
+                outcome["error"] = str(exc)
+            finally:
+                finished.set()
+
+        def poll():
+            if not finished.is_set():
+                self.root.after(100, poll)
+                return
+            self.search_in_progress = False
+            self.cancel_requested = False
+            for control in controls:
+                control.config(state=tk.NORMAL)
+            if self.progress is not None:
+                self.progress.stop()
+            self.posts = scraper.posts
             self.search_retrieved_count = scraper.search_retrieved_count
             self.search_limit = scraper.search_limit
             self.search_limit_reached = scraper.search_limit_reached
+            self.search_metadata = scraper.search_metadata
+            self.last_search_seconds = scraper.search_metadata["elapsed_seconds"]
             self._last_search_filename_context = (sub, ", ".join(kws), start, end)
-        except Exception as e:
-            messagebox.showerror("Error", f"An error occurred while searching: {e}")
+            for subm in self.posts:
+                title = subm.title if len(subm.title) <= 80 else subm.title[:77] + '...'
+                self.listbox.insert(tk.END, f"{title} ({subm.num_comments} comments)")
+            self.update_summary()
+            self.log_message(json.dumps(self.search_metadata, ensure_ascii=False))
+            if "error" in outcome:
+                messagebox.showerror("Search interrupted", outcome["error"] + "\nPartial results retained. Save Search Log for status.")
+            elif self.search_limit_reached:
+                messagebox.showwarning(
+                    "Search limit reached",
+                    f"The user-defined cap of {self.search_limit} submissions was reached before "
+                    "crossing the start date. Older matching posts may be missing."
+                )
+
+        threading.Thread(target=worker, daemon=True).start()
+        self.root.after(100, poll)
+
+    def save_search_log(self):
+        """Save search settings and termination status without credentials."""
+        if not self.search_metadata:
+            messagebox.showinfo("Search log", "Run a search first.")
             return
-        if self.search_limit_reached:
-            messagebox.showwarning(
-                "Search limit reached",
-                f"RedScrap examined the maximum {self.search_limit} submissions returned by Reddit "
-                "before reaching the start of the selected date range. Older posts within the requested "
-                "period may therefore be missing. Consider narrowing the keywords or date range."
-            )
-
-        # Populate listbox
-        self.listbox.delete(0, tk.END)
-        for subm in self.posts:
-            title = subm.title if len(subm.title) <= 80 else subm.title[:77] + '...'
-            self.listbox.insert(tk.END, f"{title} ({subm.num_comments} comments)")
-
-        # Update summary info
-        elapsed = time.perf_counter() - started_at
-        self.last_search_seconds = elapsed
-        self.update_summary()
-        self.log_message(
-            f"Search completed in {elapsed:.2f} seconds "
-            f"({len(self.posts)} matching threads; {self.search_retrieved_count} submissions examined)."
+        path = filedialog.asksaveasfilename(
+            initialfile=self._default_export_filename("SearchLog", ".json"),
+            defaultextension=".json", filetypes=[("JSON Files", "*.json")]
         )
+        if path:
+            try:
+                with open(path, "w", encoding="utf-8") as handle:
+                    json.dump(self.search_metadata, handle, indent=2, ensure_ascii=False)
+            except OSError as exc:
+                messagebox.showerror("Search log", str(exc))
 
     # ------------------------------------------------------------------
     # Long‑running tasks wrappers and implementations
@@ -2105,6 +2201,8 @@ class GUI:
         avg_comments = round(total_comments / total_threads, 2) if total_threads else 0
         limit_status = (
             f" | Search examined {self.search_retrieved_count} submissions"
+            + (" | No user-defined cap" if self.search_limit is None else f" | User cap: {self.search_limit}")
+            + (f" | Status: {self.search_metadata['status']}" if self.search_metadata else "")
             + (f" | Limit reached: Yes ({self.search_limit})" if self.search_limit_reached else "")
         )
         timing_status = (
@@ -2231,3 +2329,4 @@ if __name__ == "__main__":
             " scraping and analysis classes programmatically in a Python environment, or "
             "install the Tk libraries (e.g. python3-tk) to enable the GUI."
         )
+
