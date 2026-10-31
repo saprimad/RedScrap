@@ -1580,7 +1580,7 @@ class GUI:
         self.search_button.pack(side=tk.LEFT, padx=5)
         self.no_thread_cap = tk.BooleanVar(value=False)
         self.no_cap_checkbox = tk.Checkbutton(
-            search_controls, text="No user-defined limit", variable=self.no_thread_cap
+            search_controls, text="Remove 200-thread limit", variable=self.no_thread_cap
         )
         self.no_cap_checkbox.pack(side=tk.LEFT, padx=5)
         self.search_log_button = tk.Button(

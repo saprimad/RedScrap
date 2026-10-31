@@ -1,4 +1,4 @@
-# No user-defined thread cap test
+# Retrieval Without the 200-Thread Limit
 
 Branch: `test/no-thread-cap`. This branch is for a comparison run; it is not merged into main.
 
@@ -15,7 +15,7 @@ python RedScrap.py
 If the local branch already exists, use `git switch test/no-thread-cap` instead. Commit or stash local edits before switching if Git reports a conflict.
 
 1. Use subreddit `malaysia`, keyword `langkawi`, start `2024-10-29`, end `2026-10-29` (UTC, inclusive end date).
-2. Tick **No user-defined limit**, then **Search Threads**. Unticked retains the previous 200-submission cap.
+2. Tick **Remove 200-thread limit**, then **Search Threads**. Unticked retains the previous 200-submission cap.
 3. Wait for the search status or use **Cancel**. Cancellation is cooperative between submissions; an active network request or PRAW rate-limit wait must finish first.
 4. Choose **Save Search Log** to export the settings, timestamps, elapsed time, examined count, matching unique threads and termination status as JSON. It excludes credentials. PRAW retry counts are not instrumented; the log explicitly says so.
 5. For a normal finished run, use **Scrape All Threads** and **Early Report**. Save outputs with a distinct `T7_NoCap` name; do not overwrite T1. Search-log counts are thread counts; the displayed comment totals are Reddit metadata estimates until comments are actually exported.
