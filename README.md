@@ -7,6 +7,12 @@
 
 RedScrap is a Python desktop application for the reproducible collection and preliminary analysis of Reddit discussions for netnographic and other online research. It retrieves threads and comments through the Reddit API using PRAW, exports comment-level data to Excel, and generates an exploratory PDF report.
 
+## Graphical user interface
+
+![RedScrap v21.9.0 main graphical interface](docs/redscrap-main-gui.png)
+
+*RedScrap v21.9.0 desktop interface showing subreddit and keyword searching, date filtering, matching threads, retrieval summaries, and actions for Early Report generation and Excel export. The displayed results are illustrative and depend on live Reddit data.*
+
 ## Software workflow
 
 ![RedScrap workflow diagram](docs/redscrap-workflow-figure.png)
@@ -52,6 +58,12 @@ RedScrap was developed as part of a PhD research project at the Faculty of Pharm
 - Configurable lexical preprocessing for word-frequency analysis, with built-in English and Malay stop-word lists plus researcher-supplied custom stop words.
 - Optional binary sentiment classification using a fitted TF-IDF vectorizer and logistic-regression model.
 - Background processing, progress indication and task cancellation for longer operations.
+
+### Configurable lexical settings
+
+![RedScrap lexical settings dialog](docs/redscrap-lexical-settings.png)
+
+*Lexical Settings allow researchers to enable English and Malay stop-word lists and enter additional study-specific terms. These settings affect lexical frequency summaries, not the original exported comments.*
 
 ## What is new in v21.9.0
 
@@ -100,7 +112,7 @@ RedScrap includes runtime instrumentation based on Python's `time.perf_counter()
 
 Functional evaluation was performed using `r/malaysia` with the keyword `langkawi` across three retrieval windows (3 months, 1 year and 2 years). All documented workflows completed successfully. Repeated runs showed stable report-generation and Excel-export times for comparable workloads, while search latency varied more because it includes external Reddit/PRAW and network activity.
 
-A reproducible fresh-launch first-search effect was observed, with the first search after relaunch taking longer than subsequent searches. This is documented as an end-to-end first-request/cold-start effect rather than being attributed solely to local RedScrap processing.
+An additional initial two-year run recorded a longer search time than the subsequent designated runs. However, these observations were not obtained under controlled cold-start and warm-start conditions and do not establish a reproducible cold-start effect.
 
 See [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md) for the full test configuration, raw timings, key findings and interpretation.
 
@@ -199,6 +211,10 @@ This precautionary limit aims to minimise excessive API requests, reduce the ris
 The limit is intentionally not configurable through the graphical user interface. Advanced users may modify it directly in the open-source Python code, subject to Reddit's API policies and technical constraints.
 
 **Important:** This is an application-level precaution, not an official Reddit API rate limit. It does not guarantee complete retrieval of all relevant submissions or prevent API restrictions. Processing time may vary depending on the number of comments, network conditions, and system performance.
+
+![RedScrap search-limit warning](docs/redscrap-search-limit-warning.png)
+
+*Example of the search-limit warning when the application-level 200-submission safeguard is reached. This warning highlights potential gaps in historical retrieval; 200 is a developer-configured safeguard, not an official Reddit API limit.*
 
 ### Search completeness and other limitations
 
