@@ -31,6 +31,12 @@ The data-handling distinction should not be interpreted as a claim that local st
 
 RedScrap was developed as part of a PhD research project at the Faculty of Pharmacy, Universiti Teknologi MARA (UiTM), Malaysia, to facilitate the systematic collection of Reddit data for netnographic research. The software has since undergone continuous development, with improvements to its data-extraction capabilities, filtering options, user interface, output formats and overall usability. RedScrap is openly archived on Zenodo to promote research transparency, reproducibility, software reuse and formal citation.
 
+## Software workflow
+
+![RedScrap software workflow](docs/redscrap-workflow.svg)
+
+*Workflow overview adapted from Fig. 1 of the RedScrap IEEE manuscript. Reddit retrieval uses PRAW; selected-thread and all-thread Excel exports are independent of Early Report generation. Sentiment classification is optional and requires compatible, successfully loaded model files. The diagram is a documentation illustration, not a performance benchmark.*
+
 ## Main features
 
 - Graphical user interface built with Tkinter.
