@@ -55,7 +55,7 @@ Date windows:
 | 3 months | 5 | 23 | 212 | 200 | 4.55 | 9.57 | 0.25 | PASS |
 | 3 months | 6 | 23 | 213 | 100 | 4.02 | 9.44 | 0.26 | PASS |
 
-*Note: Test 0 represents the cold-start run after fully closing and reopening RedScrap. Tests 1–6 represent subsequent runs under the same general testing environment.*
+*Note: Test 0 was the initial run after closing and reopening RedScrap. Tests 1–6 were subsequent runs under the same general testing environment. The sequence was observational and was not a controlled cold-start/warm-start comparison.*
 
 ## Key findings
 
@@ -66,13 +66,11 @@ Date windows:
 - Search runtime was more variable because it includes external Reddit/PRAW and network latency.
 - Minor changes in exported comment counts between repeated runs are expected because Reddit is a live data source.
 
-## Fresh-launch first-search latency
+## Initial search latency (observational)
 
-A pronounced first-search latency was observed after RedScrap had been fully closed and relaunched.
+In the two-year scenario, the initial recorded search took 84.41 seconds, compared with 10.23 and 7.27 seconds in the subsequent runs. The recorded search times include external Reddit/PRAW and network activity, not only local application processing.
 
-For the 2-year scenario, the first search required 84.41 seconds, while subsequent searches of the same window required 10.23 and 7.27 seconds. The researcher also repeated the fresh-launch comparison using another keyword and observed the same qualitative pattern: the first search after a fresh launch was slower than the second search.
-
-This behaviour is therefore documented as a reproducible fresh-launch first-request/cold-start effect at the application-workflow level. However, the current timing covers the entire end-to-end search stage, which includes Reddit/PRAW and network activity. The observed initial delay should not be interpreted as proof that the latency originates exclusively within RedScrap or exclusively within the Reddit API.
+The runs were not designed as a controlled comparison of cold-start and warm-start conditions. These observations therefore do not establish a reproducible cold-start effect or identify the cause of the longer initial search time. Further controlled testing would be needed to assess that hypothesis.
 
 ## Dynamic-source note
 
