@@ -197,7 +197,7 @@ Never share another person's credentials or upload local credential/configuratio
    - **Early Report** to create an exploratory PDF report.
    - **Scrape Selected Thread** to export one thread's comments to Excel.
    - **Scrape All Threads** to export comments from all returned threads to Excel.
-6. Select the output filename and location when prompted.
+7. Select the output filename and location when prompted.
 
 In new Excel exports, **Thread URL** opens the Reddit discussion. **Source URL**
 retains the original post destination, such as the linked news article. For a
@@ -272,7 +272,7 @@ Tumiran, M. S., Abd Wahab, M. S., Jamal, J. A., & Othman, N. (2026). *RedScrap: 
 
 M. S. Tumiran, M. S. Abd Wahab, J. A. Jamal, and N. Othman, “RedScrap: Python Tool for Netnographic Data Collection,” ver. 21.9.0, Zenodo, 2026, doi: 10.5281/zenodo.22866437. [Online]. Available: https://doi.org/10.5281/zenodo.22866437
 
-Machine-readable citation metadata are provided in `CITATION.cff`.
+Machine-readable citation metadata are provided in `CITATION.cff`. The citation examples and metadata describe the archived software release; the manuscript author list may differ. Any change to the archived release's authorship should be reconciled with the Zenodo record before updating these citations.
 
 ## Authors
 
