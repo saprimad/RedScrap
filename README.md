@@ -280,10 +280,11 @@ Machine-readable citation metadata are provided in `CITATION.cff`.
 - Mohd Shahezwan Abd Wahab
 - Janattul Ain Jamal
 - Nursyuhadah Othman
+- Murizah Kassim
 
 ## Acknowledgements
 
-The development of RedScrap was supported by the Faculty of Pharmacy, Universiti Teknologi MARA (UiTM), Malaysia. The associated research acknowledges NMRR ID-26-03583-QPR and the permission of the Director-General of Health Malaysia to publish relevant research outputs.
+The development of RedScrap was supported by the Faculty of Pharmacy, Universiti Teknologi MARA (UiTM), Malaysia. The authors also acknowledge the Institute for Big Data Analytics and Artificial Intelligence (IBDAAI), Universiti Teknologi MARA (UiTM), for its academic expertise and contributions to the software evaluation and manuscript refinement. The associated research acknowledges NMRR ID-26-03583-QPR and the permission of the Director-General of Health Malaysia to publish relevant research outputs.
 
 ## Support
 
