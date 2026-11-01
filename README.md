@@ -76,7 +76,7 @@ The two `.pkl` files are required only for sentiment analysis. All other collect
 
 Do not rename the model files. RedScrap looks specifically for `sentiment_vectorizer.pkl` and `sentiment_model.pkl`.
 
-The supplied models were created with scikit-learn 1.7.2. This version is pinned in `requirements.txt` to avoid model-persistence compatibility warnings. Only load model files obtained from the official RedScrap release because Python pickle-based files can execute code during loading.
+The supplied models were created with scikit-learn 1.7.2. This version is pinned in `requirements.txt` to avoid model-persistence compatibility warnings. Only load model files from the official RedScrap release, your own training workflow or another trusted source because Python pickle-based files can execute code during loading.
 
 ## Reddit API credential storage
 
@@ -212,6 +212,23 @@ These settings affect lexical word-frequency output only and do not alter the ra
 ## Sentiment-analysis limitation
 
 The supplied sentiment component performs binary positive/negative classification using a fitted TF-IDF vectorizer and logistic-regression model documented as Sentiment140-based; the training-data provenance cannot be independently verified from the distributed model artefacts. The model has not been externally validated for Reddit discourse, Malay-language content or the user's specific dataset. Sentiment outputs should therefore be treated as exploratory only and should not be interpreted as validated measures of opinion or stance. RedScrap now places this caution directly in the generated PDF report and keeps the accompanying narrative descriptive rather than inferential.
+
+### Using researcher-trained sentiment models
+
+Researchers may adapt the optional sentiment component to their study context by manually labelling their own data, training and validating a compatible TF-IDF vectorizer and sentiment classifier, and replacing the supplied model files. Training and validation are undertaken separately; RedScrap loads the fitted files to classify retrieved comments.
+
+To use researcher-trained models:
+
+1. Define the positive and negative sentiment categories and manually label the study data. Sentiment labels should not automatically be interpreted as acceptance or rejection of a topic.
+2. Separate training and evaluation data before fitting the vectorizer and classifier. Fit the TF-IDF vectorizer only on training data and evaluate the matched classifier on held-out data representative of the intended language and research context.
+3. Train the classifier to predict either numeric labels `0` (Negative) and `1` (Positive), or the exact string labels `Negative` and `Positive`. RedScrap maps numeric 0/1 predictions to these names, which its report narrative and colours expect. Other label encodings require code changes.
+4. Export the fitted pair using `joblib.dump`: save the vectorizer as `sentiment_vectorizer.pkl` and its corresponding classifier as `sentiment_model.pkl`.
+5. Back up the original files and replace both files in the directory from which RedScrap is launched. The current loader uses relative filenames, so launch RedScrap from that directory, normally the folder containing `RedScrap.py`.
+6. Restart the application and check the resulting classifications and report output against manually reviewed examples before substantive use.
+
+The replacement files must form a matched pair: the classifier must accept the features produced by the fitted vectorizer. RedScrap passes comment text directly to `vectorizer.transform()`, followed by `model.predict()`; any required text preprocessing must therefore be included in the saved vectorizer or otherwise reproduced in the application. Use compatible dependency versions; the supplied models use scikit-learn 1.7.2. Replacing the files alone does not establish validity or provide a validated extension to additional sentiment categories.
+
+Load only model files you have created or obtained from a trusted source, as pickle-based files can execute code during loading. Document the training data, labelling procedure, software versions and validation results when reporting researcher-trained models.
 
 ## Ethical and responsible use
 
