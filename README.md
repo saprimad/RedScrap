@@ -216,7 +216,7 @@ The limit is intentionally not configurable through the graphical user interface
 
 **Important:** This is an application-level precaution, not an official Reddit API rate limit. It does not guarantee complete retrieval of all relevant submissions or prevent API restrictions. Processing time may vary depending on the number of comments, network conditions, and system performance.
 
-![RedScrap search-limit warning](docs/redscrap-search-limit-warning.png)
+![RedScrap search-limit warning](docs/more%20search.png)
 
 *Example of the search-limit warning when the application-level 200-submission safeguard is reached. This warning highlights potential gaps in historical retrieval; 200 is a developer-configured safeguard, not an official Reddit API limit.*
 
