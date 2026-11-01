@@ -100,6 +100,10 @@ The supplied models were created with scikit-learn 1.7.2. This version is pinned
 
 ## Reddit API credential storage
 
+![RedScrap API credential configuration interface](docs/api%20credential%20storage.png)
+
+*RedScrap API credential configuration interface. Sensitive credentials must be kept private; the application uses the operating system credential store through `keyring` where available, with environment-variable or session-only alternatives as documented below.*
+
 RedScrap no longer stores the Reddit client secret in plaintext inside `reddit_config.json`. The client ID and user agent may remain in that local configuration file, while the client secret is stored using the operating system credential store through Python `keyring` when available.
 
 Existing installations that still contain a legacy `client_secret` field in `reddit_config.json` are migrated on the next successful launch: RedScrap attempts to save the secret to the operating system credential store and rewrites the local configuration without the secret.
