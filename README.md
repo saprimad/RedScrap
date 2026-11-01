@@ -65,6 +65,35 @@ RedScrap was developed as part of a PhD research project at the Faculty of Pharm
 
 *Lexical Settings allow researchers to enable English and Malay stop-word lists and enter additional study-specific terms. These settings affect lexical frequency summaries, not the original exported comments.*
 
+## Generated outputs: Excel dataset and Early Report
+
+RedScrap provides two independently selectable outputs after searching for matching threads. Researchers may export a selected thread or all retrieved threads to Excel, generate an Early Report in PDF format, or use both outputs for complementary purposes.
+
+### Excel workbook (.xlsx): structured data for further analysis
+
+The Excel export preserves retrieved comment-level records for subsequent researcher-led coding, screening, cleaning and analysis. Exported fields include the thread ID, thread date, post type, thread title, Reddit discussion URL (Thread URL), original post destination (Source URL), author, comment text and upvotes. The precise number of rows depends on the retrieved and accessible comments; it should not be interpreted as an exhaustive Reddit archive.
+
+The workbook is a data export, **not** an automatically validated thematic analysis or research conclusion. Researchers can use it in Excel or import the data into their preferred analytical software. Lexical stop-word settings used for the Early Report do not modify the original exported comment text.
+
+### Early Report (.pdf): exploratory dataset orientation
+
+The separately generated PDF helps researchers inspect the dataset before undertaking formal analysis. Depending on the retrieved data and available optional model files, it includes:
+
+- Dataset metadata, including thread and comment counts and the covered time span.
+- Descriptive statistics for engagement (upvotes) and comment length.
+- Post-type distribution, presented with counts, percentages and a visualisation.
+- Temporal and yearly summaries of the retrieved discussions.
+- Lexical summaries, including frequent words and selected bigrams, using configurable English, Malay and custom stop-word filtering.
+- Optional positive/negative sentiment counts, percentages, a visualisation and descriptive narrative when the compatible sentiment model files are present.
+
+**Interpretation:** The Early Report is descriptive and exploratory. Its sentiment classifier has not been externally validated for Reddit or Malay-language discourse; sentiment is not equivalent to stance or social acceptance. Researchers should verify data quality and conduct appropriate independent analyses before drawing conclusions.
+
+### Suggested research workflow
+
+**Search and retrieve Reddit discussions → inspect the Early Report → export the Excel dataset → clean, code and analyse the data independently → report research findings.**
+
+The Early Report and Excel export are separate actions, so either may be generated without the other. See the [software evaluation](SOFTWARE_EVALUATION.md) for documented demonstration runs and performance observations.
+
 ## What is new in v21.9.0
 
 - Integrated the trained TF-IDF vectorizer and binary sentiment classifier.
