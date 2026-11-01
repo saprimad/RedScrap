@@ -7,6 +7,14 @@
 
 RedScrap is a Python desktop application for the reproducible collection and preliminary analysis of Reddit discussions for netnographic and other online research. It retrieves threads and comments through the Reddit API using PRAW, exports comment-level data to Excel, and generates an exploratory PDF report.
 
+## Software workflow
+
+![RedScrap workflow diagram](docs/redscrap-workflow-figure.png)
+
+*Fig. 1. RedScrap workflow showing Reddit data retrieval through PRAW, selected-thread or all-thread structured Excel export, and independently selectable Early Report generation with optional sentiment classification.*
+
+The diagram illustrates the workflow described in the RedScrap software paper. Excel export and Early Report generation are separate actions; sentiment analysis is optional and requires compatible model files.
+
 ## Intended users and research contribution
 
 RedScrap is designed to reduce routine technical barriers to Reddit-based research, particularly for researchers in the social and health sciences who may have limited programming or computational expertise. The graphical desktop interface integrates subreddit and keyword searching, date filtering, thread and comment retrieval, structured Excel export, configurable lexical preprocessing, exploratory reporting and optional sentiment classification without requiring users to build their own API scripts or command-line workflows.
