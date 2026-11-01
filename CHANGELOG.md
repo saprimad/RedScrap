@@ -28,7 +28,7 @@ All notable changes to RedScrap are documented in this file.
 
 - Added `time.perf_counter()` instrumentation for end-to-end search/retrieval, Early Report generation and Excel export.
 - Added documented functional/runtime evaluation across 3-month, 1-year and 2-year retrieval windows.
-- Documented the fresh-launch first-search latency as an observed end-to-end cold-start effect without attributing it exclusively to RedScrap, Reddit/PRAW or network activity.
+- Documented the longer initial search latency as an observational end-to-end timing difference; no controlled or reproducible cold-start effect is claimed.
 - Added `SOFTWARE_EVALUATION.md` with test configuration, hardware/software environment, raw timings, success outcomes and interpretation.
 - Updated reviewer-response audit notes to align with the final evaluation evidence and software behaviour.
 
