@@ -1,0 +1,49 @@
+Comment,Thread URL,Relevance,Sentiment
+The library service was helpful and excellent; sample 0 Positive,https://example.test/thread/0,Related,Positive
+The library service was awful and disappointing; sample 0 Negative,https://example.test/thread/0,Related,Negative
+The library service opens on Monday; sample 0 Neutral,https://example.test/thread/0,Related,Neutral
+Football players scored a goal yesterday; sample 0 Not related,https://example.test/thread/0,Not related,
+The library service was helpful and excellent; sample 1 Positive,https://example.test/thread/1,Related,Positive
+The library service was awful and disappointing; sample 1 Negative,https://example.test/thread/1,Related,Negative
+The library service opens on Monday; sample 1 Neutral,https://example.test/thread/1,Related,Neutral
+Football players scored a goal yesterday; sample 1 Not related,https://example.test/thread/1,Not related,
+The library service was helpful and excellent; sample 2 Positive,https://example.test/thread/2,Related,Positive
+The library service was awful and disappointing; sample 2 Negative,https://example.test/thread/2,Related,Negative
+The library service opens on Monday; sample 2 Neutral,https://example.test/thread/2,Related,Neutral
+Football players scored a goal yesterday; sample 2 Not related,https://example.test/thread/2,Not related,
+The library service was helpful and excellent; sample 3 Positive,https://example.test/thread/3,Related,Positive
+The library service was awful and disappointing; sample 3 Negative,https://example.test/thread/3,Related,Negative
+The library service opens on Monday; sample 3 Neutral,https://example.test/thread/3,Related,Neutral
+Football players scored a goal yesterday; sample 3 Not related,https://example.test/thread/3,Not related,
+The library service was helpful and excellent; sample 4 Positive,https://example.test/thread/4,Related,Positive
+The library service was awful and disappointing; sample 4 Negative,https://example.test/thread/4,Related,Negative
+The library service opens on Monday; sample 4 Neutral,https://example.test/thread/4,Related,Neutral
+Football players scored a goal yesterday; sample 4 Not related,https://example.test/thread/4,Not related,
+The library service was helpful and excellent; sample 5 Positive,https://example.test/thread/5,Related,Positive
+The library service was awful and disappointing; sample 5 Negative,https://example.test/thread/5,Related,Negative
+The library service opens on Monday; sample 5 Neutral,https://example.test/thread/5,Related,Neutral
+Football players scored a goal yesterday; sample 5 Not related,https://example.test/thread/5,Not related,
+The library service was helpful and excellent; sample 6 Positive,https://example.test/thread/6,Related,Positive
+The library service was awful and disappointing; sample 6 Negative,https://example.test/thread/6,Related,Negative
+The library service opens on Monday; sample 6 Neutral,https://example.test/thread/6,Related,Neutral
+Football players scored a goal yesterday; sample 6 Not related,https://example.test/thread/6,Not related,
+The library service was helpful and excellent; sample 7 Positive,https://example.test/thread/7,Related,Positive
+The library service was awful and disappointing; sample 7 Negative,https://example.test/thread/7,Related,Negative
+The library service opens on Monday; sample 7 Neutral,https://example.test/thread/7,Related,Neutral
+Football players scored a goal yesterday; sample 7 Not related,https://example.test/thread/7,Not related,
+The library service was helpful and excellent; sample 8 Positive,https://example.test/thread/8,Related,Positive
+The library service was awful and disappointing; sample 8 Negative,https://example.test/thread/8,Related,Negative
+The library service opens on Monday; sample 8 Neutral,https://example.test/thread/8,Related,Neutral
+Football players scored a goal yesterday; sample 8 Not related,https://example.test/thread/8,Not related,
+The library service was helpful and excellent; sample 9 Positive,https://example.test/thread/9,Related,Positive
+The library service was awful and disappointing; sample 9 Negative,https://example.test/thread/9,Related,Negative
+The library service opens on Monday; sample 9 Neutral,https://example.test/thread/9,Related,Neutral
+Football players scored a goal yesterday; sample 9 Not related,https://example.test/thread/9,Not related,
+The library service was helpful and excellent; sample 10 Positive,https://example.test/thread/10,Related,Positive
+The library service was awful and disappointing; sample 10 Negative,https://example.test/thread/10,Related,Negative
+The library service opens on Monday; sample 10 Neutral,https://example.test/thread/10,Related,Neutral
+Football players scored a goal yesterday; sample 10 Not related,https://example.test/thread/10,Not related,
+The library service was helpful and excellent; sample 11 Positive,https://example.test/thread/11,Related,Positive
+The library service was awful and disappointing; sample 11 Negative,https://example.test/thread/11,Related,Negative
+The library service opens on Monday; sample 11 Neutral,https://example.test/thread/11,Related,Neutral
+Football players scored a goal yesterday; sample 11 Not related,https://example.test/thread/11,Not related,
