@@ -149,6 +149,14 @@ An additional initial two-year run recorded a longer search time than the subseq
 
 See [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md) for the full test configuration, raw timings, key findings and interpretation.
 
+### Experimental GUI screenshots
+
+These screenshots show two runs from the [`test/no-thread-cap`](https://github.com/saprimad/RedScrap/tree/test/no-thread-cap) experimental branch with the application-level thread cap disabled.
+
+![RedScrap GUI with the thread cap disabled, test run 1](docs/test%201%20-%20redscrap-gui-thread-cap-disabled.png)
+
+![RedScrap GUI with the thread cap disabled, test run 2](docs/test%202%20-%20redscrap-gui-thread-cap-disabled.png.png)
+
 ## System requirements
 
 - Python 3.10 or later; Python 3.11 is recommended.
