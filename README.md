@@ -98,6 +98,14 @@ An additional experimental evaluation on 31 October 2026 removed the application
 
 See [SOFTWARE_EVALUATION.md](SOFTWARE_EVALUATION.md) for the full test configuration, raw timings, key findings and interpretation.
 
+### Experimental GUI screenshots
+
+The screenshots show two runs with the application-level thread cap disabled.
+
+![RedScrap GUI with the thread cap disabled, test run 1](https://raw.githubusercontent.com/saprimad/RedScrap/07e60f3ebfe50a50231ddbd522c6a617aa1be45d/docs/test%201%20-%20redscrap-gui-thread-cap-disabled.png)
+
+![RedScrap GUI with the thread cap disabled, test run 2](https://raw.githubusercontent.com/saprimad/RedScrap/07e60f3ebfe50a50231ddbd522c6a617aa1be45d/docs/test%202%20-%20redscrap-gui-thread-cap-disabled.png.png)
+
 ## System requirements
 
 - Python 3.10 or later; Python 3.11 is recommended.
