@@ -268,6 +268,29 @@ The limit is intentionally not configurable through the graphical user interface
 - Deleted, removed or inaccessible content may be missing or represented incompletely.
 - The estimated counts displayed in the interface may differ from the final exported number of accessible comments.
 
+## Troubleshooting
+
+### Reddit IP request restriction
+
+![Reddit page reporting too many requests from an IP address](docs/reddit-ip-request-warning.png.png)
+
+*Example of a Reddit access-restriction page reporting too many requests from an IP address. The reference code has been obscured.*
+
+Reddit may temporarily restrict access when it detects excessive requests from an IP address. The page shown asks the user to wait a few minutes before trying again. The actual recovery time may vary.
+
+If you encounter this message:
+
+1. Pause the requests and avoid repeatedly restarting searches or refreshing the blocked page.
+2. Wait as instructed by Reddit before trying again. Avoid running repeated or overlapping collection attempts.
+3. When reporting a RedScrap issue, retain any available error messages, request timestamps and HTTP status codes. Include the application version and the action that triggered the problem. Keep credentials and account-specific reference codes private.
+4. If the restriction persists, follow the support instructions on Reddit's restriction page and provide its reference code privately to Reddit support.
+
+**Interpretation:** This screenshot documents an IP-based access restriction. It does not establish a maximum number of retrievable threads or comments, identify an exact request-rate threshold, or by itself confirm a particular HTTP status code or authenticated PRAW/API error. It is a troubleshooting example, not a controlled capacity benchmark.
+
+RedScrap's **200-submission safeguard** is an application-level retrieval cap. Reddit's request-rate and access restrictions are separate controls, and the application cap does not guarantee that restrictions will be avoided. PRAW respects Reddit's API rate-limit headers, but users should still review the actual response or error when diagnosing a failure.
+
+Further guidance: [Reddit Data API guidance](https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki) and [PRAW rate-limit documentation](https://praw.readthedocs.io/en/stable/getting_started/ratelimits.html).
+
 ## Lexical filtering and language scope
 
 RedScrap uses configurable lexical preprocessing for its word-frequency output. Built-in English and Malay stop-word lists are enabled by default because early development and testing in the Malaysian context showed that common function words could contribute substantial lexical noise and reduce the interpretability of frequency summaries. Researchers may disable either built-in list and may paste additional study-specific stop words directly through **Lexical Settings**.
